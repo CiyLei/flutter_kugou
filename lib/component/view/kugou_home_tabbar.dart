@@ -31,16 +31,19 @@ class _KuGouTabBarViewState extends State<KuGouTabBarView> {
       },
       onPointerMove: (PointerMoveEvent event) {
         if (flag && event.position.dx != _dowmPoint.dx && widget.controller.index == 0) {
-          if (event.position.dx > _dowmPoint.dx) {
+          if (event.position.dx > _dowmPoint.dx + 20.0) {
             setState(() {
               tabbarOpenEnable = false;
             });
+            flag = false;
           } else {
-            setState(() {
-              tabbarOpenEnable = true;
-            });
+            if (!tabbarOpenEnable) {
+              setState(() {
+                tabbarOpenEnable = true;
+              });
+              flag = false;
+            }
           }
-          flag = false;
         }
       },
       onPointerUp: (PointerUpEvent event) {
