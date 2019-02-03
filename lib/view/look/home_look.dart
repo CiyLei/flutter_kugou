@@ -5,7 +5,7 @@ class Look extends StatefulWidget {
   _LookState createState() => _LookState();
 }
 
-class _LookState extends State<Look> {
+class _LookState extends State<Look> with AutomaticKeepAliveClientMixin{
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,4 +18,7 @@ class _LookState extends State<Look> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

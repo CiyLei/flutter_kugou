@@ -5,7 +5,7 @@ class Listen extends StatefulWidget {
   _ListenState createState() => _ListenState();
 }
 
-class _ListenState extends State<Listen> {
+class _ListenState extends State<Listen> with AutomaticKeepAliveClientMixin{
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,4 +18,7 @@ class _ListenState extends State<Listen> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

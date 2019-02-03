@@ -10,7 +10,7 @@ class Me extends StatefulWidget {
   _MeState createState() => _MeState();
 }
 
-class _MeState extends State<Me> {
+class _MeState extends State<Me> with AutomaticKeepAliveClientMixin{
   List<CollectionModel> testCollectionModel;
   ScrollController _scrollController;
   HomePageBloc _homePageBloc;
@@ -171,7 +171,7 @@ class _MeState extends State<Me> {
               ]),
             ),
             SliverPadding(
-              padding: const EdgeInsets.only(top: 150.0),
+              padding: const EdgeInsets.only(top: 80.0),
             ),
           ],
         )
@@ -346,6 +346,9 @@ class _MeState extends State<Me> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class SongList extends StatefulWidget {
@@ -486,7 +489,7 @@ class _SongListState extends State<SongList>
                                 height: 5.0,
                               ),
                               Text(
-                                "${val.songNum}首,${val.downLoadNum}首已下载",
+                                "${val.songNum}首, ${val.downLoadNum}首已下载",
                                 style: TextStyle(
                                     color: Colors.grey, fontSize: 12.0),
                               )
