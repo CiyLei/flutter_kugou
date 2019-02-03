@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:flutter_kugou/model/collection_model.dart';
 import 'dart:math';
+
+import 'package:flutter_kugou/view/home_page_bloc.dart';
 
 class Me extends StatefulWidget {
   @override
@@ -9,10 +12,21 @@ class Me extends StatefulWidget {
 
 class _MeState extends State<Me> {
   List<CollectionModel> testCollectionModel;
+  ScrollController _scrollController;
+  HomePageBloc _homePageBloc;
 
   @override
   void initState() {
     super.initState();
+    _homePageBloc = BlocProvider.of<HomePageBloc>(context);
+    _scrollController = ScrollController();
+    _scrollController.addListener(() {
+      if (_homePageBloc.searchIsExpand && _scrollController.offset > 350.0) {
+        _homePageBloc.closeSearch();
+      } else if (!_homePageBloc.searchIsExpand && _scrollController.offset < 350.0) {
+        _homePageBloc.expandSearch();
+      }
+    });
     testCollectionModel = [
       CollectionModel(
           name: "抖音最火的中文歌",
@@ -105,28 +119,39 @@ class _MeState extends State<Me> {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Container(
-          height: 60.0,
-          color: Theme.of(context).primaryColor,
+        StreamBuilder(
+          stream: _homePageBloc.searchHeightStream,
+          initialData: 0.0,
+          builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+            return Container(
+              height: 60.0 - snapshot.data,
+              color: Theme.of(context).primaryColor,
+            );
+          },
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 50.0),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(5.0),
-                    topRight: Radius.circular(5.0))),
-            constraints: BoxConstraints.tightFor(),
-          ),
+        StreamBuilder(
+          stream: _homePageBloc.searchHeightStream,
+          initialData: 0.0,
+          builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+            return Padding(
+              padding: EdgeInsets.only(top: 50.0 - snapshot.data),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(5.0),
+                        topRight: Radius.circular(5.0))),
+                constraints: BoxConstraints.tightFor(),
+              ),
+            );
+          },
         ),
         CustomScrollView(
+          controller: _scrollController,
           slivers: <Widget>[
-            SliverPadding(
-              padding: const EdgeInsets.only(top: 50.0),
-            ),
             SliverList(
               delegate: SliverChildListDelegate([
+                SizedBox(height: 50.0,),
                 _buildUserInfo("Ciy雷", "5", "13583"),
                 Container(
                   color: Colors.grey[200],
@@ -219,46 +244,52 @@ class _MeState extends State<Me> {
   }
 
   Widget _buildSongNum(int local, int collection, int download, int recent) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        _buildSongNumItem("本地音乐", Icons.phone_iphone, local),
-        _buildSongNumItem("我的收藏", Icons.color_lens, collection),
-        _buildSongNumItem("下载", Icons.cloud_download, download),
-        _buildSongNumItem("最近播放", Icons.timelapse, recent),
-      ],
+    return DecoratedBox(
+      decoration: BoxDecoration(color: Colors.white),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          _buildSongNumItem("本地音乐", Icons.phone_iphone, local),
+          _buildSongNumItem("我的收藏", Icons.color_lens, collection),
+          _buildSongNumItem("下载", Icons.cloud_download, download),
+          _buildSongNumItem("最近播放", Icons.timelapse, recent),
+        ],
+      ),
     );
   }
 
   Widget _buildSongNumItem(String name, IconData icon, int num) {
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: 15.0,
-        ),
-        Icon(
-          icon,
-          color: Theme.of(context).primaryColor,
-          size: 30,
-        ),
-        SizedBox(
-          height: 5.0,
-        ),
-        Text(
-          name,
-          style: TextStyle(fontSize: 14.0),
-        ),
-        SizedBox(
-          height: 2.0,
-        ),
-        Text(
-          "$num",
-          style: TextStyle(color: Colors.grey, fontSize: 12.0),
-        ),
-        SizedBox(
-          height: 15.0,
-        ),
-      ],
+    return DecoratedBox(
+      decoration: BoxDecoration(color: Colors.white),
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 15.0,
+          ),
+          Icon(
+            icon,
+            color: Theme.of(context).primaryColor,
+            size: 30,
+          ),
+          SizedBox(
+            height: 5.0,
+          ),
+          Text(
+            name,
+            style: TextStyle(fontSize: 14.0),
+          ),
+          SizedBox(
+            height: 2.0,
+          ),
+          Text(
+            "$num",
+            style: TextStyle(color: Colors.grey, fontSize: 12.0),
+          ),
+          SizedBox(
+            height: 15.0,
+          ),
+        ],
+      ),
     );
   }
 
