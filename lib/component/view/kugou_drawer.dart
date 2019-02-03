@@ -192,10 +192,10 @@ class _KuGouDrawerState extends State<KuGouDrawer> {
                 return _buildItem(items[index]);
               },
               separatorBuilder: (BuildContext context, int index) {
-                if (index == 4 || index == 12 || index == 13)
-                  return Divider(
-                    height: 20.0,
-                  );
+                if (index == 4)
+                  return Divider( height: 30.0, );
+                else if (index == 12)
+                  return Divider( height: 10.0, );
                 return SizedBox();
               },
             ),
