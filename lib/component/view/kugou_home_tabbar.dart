@@ -31,7 +31,7 @@ class _KuGouTabBarViewState extends State<KuGouTabBarView> {
       },
       onPointerMove: (PointerMoveEvent event) {
         if (flag && event.position.dx != _dowmPoint.dx && widget.controller.index == 0) {
-          if (event.position.dx > _dowmPoint.dx + 20.0) {
+          if (event.position.dx > _dowmPoint.dx + 50.0) {
             setState(() {
               tabbarOpenEnable = false;
             });
