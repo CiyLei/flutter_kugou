@@ -13,42 +13,25 @@ class KuGouTabBarView extends StatefulWidget {
 
 class _KuGouTabBarViewState extends State<KuGouTabBarView> {
 
-  Offset _dowmPoint;
-  bool tabbarOpenEnable, flag;
+  bool tabbarOpenEnable;
 
   @override
   void initState() {
     super.initState();
     tabbarOpenEnable = true;
-    flag = true;
   }
 
   @override
   Widget build(BuildContext context) {
     return Listener(
       onPointerDown: (PointerDownEvent event) {
-        _dowmPoint = event.position;
-      },
-      onPointerMove: (PointerMoveEvent event) {
-        if (flag && event.position.dx != _dowmPoint.dx && widget.controller.index == 0) {
-          if (event.position.dx > _dowmPoint.dx + 50.0) {
-            setState(() {
-              tabbarOpenEnable = false;
-            });
-            flag = false;
+        setState(() {
+          if (event.position.dx <= MediaQuery.of(context).size.width / 3 && widget.controller.index == 0) {
+            tabbarOpenEnable = false;
           } else {
-            if (!tabbarOpenEnable) {
-              setState(() {
-                tabbarOpenEnable = true;
-              });
-              flag = false;
-            }
+            tabbarOpenEnable = true;
           }
-        }
-      },
-      onPointerUp: (PointerUpEvent event) {
-        flag = true;
-        setState(() {});
+        });
       },
       child: AbsorbPointer(
         absorbing: widget.controller.index != 0 ? false : !tabbarOpenEnable,
