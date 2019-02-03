@@ -223,7 +223,7 @@ class _KuGouDrawerState extends State<KuGouDrawer> {
       child: InkWell(
         onTap: model.onTap,
         child: Container(
-          padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 15.0),
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 15.0),
           child: Row(
             children: <Widget>[
               Icon(
