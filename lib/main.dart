@@ -24,19 +24,17 @@ class KuGouApp extends StatefulWidget {
 }
 
 class _KuGouAppState extends State<KuGouApp> {
-  double progress;
 
   @override
   void initState() {
     super.initState();
-    progress = 0.0;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return KuGouScaffold(
       drawer: KuGouDrawer(),
-      body: Stack(
+      child: Stack(
         children: <Widget>[
           HomePage(),
           Positioned(
@@ -52,5 +50,23 @@ class _KuGouAppState extends State<KuGouApp> {
         ],
       ),
     );
+//    return Scaffold(
+//      drawer: KuGouDrawer(),
+//      body: Stack(
+//        children: <Widget>[
+//          HomePage(),
+//          Positioned(
+//            bottom: 0.0,
+//            left: 0.0,
+//            right: 0.0,
+//            child: KuGouBottomNavigation(
+//                imgUrl:
+//                    "http://imge.kugou.com/stdmusic/20161229/20161229233400375274.jpg",
+//                song: "光年之外",
+//                author: "G.E.M.邓紫棋",),
+//          )
+//        ],
+//      ),
+//    );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_kugou/component/view/kugou_drawer.dart';
+import 'package:flutter_kugou/component/view/kugou_home_tabbar.dart';
 import 'package:flutter_kugou/view//me/home_me.dart';
 import 'package:flutter_kugou/view/listen/home_listen.dart';
 import 'package:flutter_kugou/view/look/home_look.dart';
@@ -53,7 +55,7 @@ class _HomePageState extends State<HomePage>
         ),
         child: Stack(
           children: <Widget>[
-            TabBarView(
+            KuGouTabBarView(
               controller: _tabController,
               children: [Me(), Listen(), Look(), Sing()],
             ),
@@ -121,7 +123,7 @@ class _HomePageState extends State<HomePage>
             size: 20.0,
           ),
           onPressed: () {
-            (context.rootAncestorStateOfType(const TypeMatcher<ScaffoldState>()) as ScaffoldState).openDrawer();
+            KuGouScaffoldState.of(context).openDrawer();
           }),
       trailing: PopupMenuButton<String>(
         itemBuilder: (BuildContext context) {

@@ -95,10 +95,10 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation> {
         Padding(
           padding: const EdgeInsets.only(left: 10.0, bottom: 5.0),
           child: CircleAvatar(
-            radius: 30.0,
+            radius: 31.0,
             backgroundColor: Colors.grey[300],
             child: CircleAvatar(
-              radius: 29.0,
+              radius: 30.0,
               backgroundImage: NetworkImage(widget.imgUrl),
             ),
           ),

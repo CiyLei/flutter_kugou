@@ -1,5 +1,121 @@
 import 'package:flutter/material.dart';
 
+class KuGouScaffold extends StatefulWidget {
+  KuGouScaffold({this.drawer, this.child});
+
+  Widget drawer;
+  Widget child;
+
+  @override
+  KuGouScaffoldState createState() => KuGouScaffoldState();
+}
+
+class KuGouScaffoldState extends State<KuGouScaffold> {
+  ScrollController _controller;
+  double _scrollOffset;
+  bool _isDrawer;
+  double _progress;
+
+  bool get isDrawer => _isDrawer;
+
+  @override
+  void initState() {
+    super.initState();
+    _isDrawer = false;
+    _progress = 0.0;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _scrollOffset = MediaQuery.of(context).size.width * 0.8;
+    _controller = ScrollController(initialScrollOffset: _scrollOffset);
+    _controller.addListener((){
+      setState(() {
+        _progress = (_scrollOffset - _controller.offset) / _scrollOffset;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  static KuGouScaffoldState of(BuildContext context) {
+    return context.ancestorStateOfType(const TypeMatcher<KuGouScaffoldState>()) as KuGouScaffoldState;
+  }
+
+  void openDrawer() {
+    _controller.animateTo(0.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.linear);
+    setState(() {
+      _isDrawer = true;
+    });
+  }
+
+  void closeDrawer() {
+    _controller.animateTo(_scrollOffset,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.linear);
+    setState(() {
+      _isDrawer = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Listener(
+        onPointerUp: (PointerUpEvent event) {
+          if (_controller.offset >= _scrollOffset / 2) {
+            closeDrawer();
+          } else {
+            openDrawer();
+          }
+        },
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          controller: _controller,
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: _scrollOffset,
+                child: widget.drawer,
+              ),
+              Stack(
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.center,
+                    child: widget.child,
+                    foregroundDecoration: BoxDecoration(
+                        color: Color.fromRGBO(0, 0, 0, _progress * 0.5)
+                    ),
+                  ),
+                  _isDrawer ? GestureDetector(
+                    onTap: () {
+                      closeDrawer();
+                    },
+                    child: AbsorbPointer(
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                      ),
+                    ),
+                  ) : SizedBox()
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class KuGouDrawer extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -11,19 +127,32 @@ class _KuGouDrawerState extends State<KuGouDrawer> {
   bool _notificationBarLyrics = false;
 
   final List<ItemModel> items = [
-    ItemModel(icon: Icons.message, title: "消息中心", onTap: (){}),
-    ItemModel(icon: Icons.print, title: "皮肤中心", description: "全村的希望", onTap: (){}),
-    ItemModel(icon: Icons.verified_user, title: "会员中心", onTap: (){}),
-    ItemModel(icon: Icons.card_giftcard, title: "流量包月", description: "听歌免流量", onTap: (){}),
-    ItemModel(icon: Icons.cloud, title: "私人云盘", onTap: (){}),
-    ItemModel(icon: Icons.timer, title: "定时关闭", onTap: (){}),
-    ItemModel(icon: Icons.av_timer, title: "音乐闹钟", onTap: (){}),
-    ItemModel(icon: Icons.line_style, title: "蝰蛇音效", onTap: (){}),
-    ItemModel(icon: Icons.sort_by_alpha, title: "听歌识曲", onTap: (){}),
-    ItemModel(icon: Icons.content_cut, title: "音乐工具", description: "听觉保护等", onTap: (){}),
-    ItemModel(icon: Icons.directions_car, title: "驾驶模式", onTap: (){}),
-    ItemModel(icon: Icons.ring_volume, title: "铃声彩铃", onTap: (){}),
-    ItemModel(icon: Icons.wb_sunny, title: "儿童专区", description: "快乐成长 有我陪伴", onTap: (){}),
+    ItemModel(icon: Icons.message, title: "消息中心", onTap: () {}),
+    ItemModel(
+        icon: Icons.print, title: "皮肤中心", description: "全村的希望", onTap: () {}),
+    ItemModel(icon: Icons.verified_user, title: "会员中心", onTap: () {}),
+    ItemModel(
+        icon: Icons.card_giftcard,
+        title: "流量包月",
+        description: "听歌免流量",
+        onTap: () {}),
+    ItemModel(icon: Icons.cloud, title: "私人云盘", onTap: () {}),
+    ItemModel(icon: Icons.timer, title: "定时关闭", onTap: () {}),
+    ItemModel(icon: Icons.av_timer, title: "音乐闹钟", onTap: () {}),
+    ItemModel(icon: Icons.line_style, title: "蝰蛇音效", onTap: () {}),
+    ItemModel(icon: Icons.sort_by_alpha, title: "听歌识曲", onTap: () {}),
+    ItemModel(
+        icon: Icons.content_cut,
+        title: "音乐工具",
+        description: "听觉保护等",
+        onTap: () {}),
+    ItemModel(icon: Icons.directions_car, title: "驾驶模式", onTap: () {}),
+    ItemModel(icon: Icons.ring_volume, title: "铃声彩铃", onTap: () {}),
+    ItemModel(
+        icon: Icons.wb_sunny,
+        title: "儿童专区",
+        description: "快乐成长 有我陪伴",
+        onTap: () {}),
   ];
 
   @override
@@ -33,58 +162,56 @@ class _KuGouDrawerState extends State<KuGouDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: MediaQuery.removePadding(
-        context: context,
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 20.0,
+    return MediaQuery.removePadding(
+      context: context,
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 20.0,
+          ),
+          Expanded(
+            child: ListView.separated(
+              itemCount: 14,
+              itemBuilder: (BuildContext context, int index) {
+                if (index == 13) {
+                  return _buildItem(ItemModel(
+                      icon: Icons.receipt,
+                      title: "通知栏歌词",
+                      child: Switch.adaptive(
+                          value: _notificationBarLyrics,
+                          activeColor: Colors.lightBlue,
+                          onChanged: (value) {
+                            this.setState(() {
+                              _notificationBarLyrics =
+                              !_notificationBarLyrics;
+                            });
+                          })));
+                }
+                return _buildItem(items[index]);
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                if (index == 4 || index == 12 || index == 13)
+                  return Divider(
+                    height: 20.0,
+                  );
+                return SizedBox();
+              },
             ),
-            Expanded(
-              child: ListView.separated(
-                itemCount: 14,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == 13) {
-                    return _buildItem(ItemModel(
-                        icon: Icons.receipt,
-                        title: "通知栏歌词",
-                        child: Switch.adaptive(
-                            value: _notificationBarLyrics,
-                            activeColor: Colors.lightBlue,
-                            onChanged: (value) {
-                              this.setState(() {
-                                _notificationBarLyrics =
-                                    !_notificationBarLyrics;
-                              });
-                            })));
-                  }
-                  return _buildItem(items[index]);
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  if (index == 4 || index == 12 || index == 13)
-                    return Divider(
-                      height: 20.0,
-                    );
-                  return SizedBox();
-                },
+          ),
+          Divider(
+            height: 20.0,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 5.0, bottom: 10.0),
+            child: _buildItem(
+              ItemModel(
+                icon: Icons.settings,
+                title: "说明",
+                onTap: () {},
               ),
             ),
-            Divider(
-              height: 20.0,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 5.0, bottom: 10.0),
-              child: _buildItem(
-                ItemModel(
-                  icon: Icons.settings,
-                  title: "说明",
-                  onTap: (){},
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
