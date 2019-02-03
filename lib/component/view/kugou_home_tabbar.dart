@@ -26,7 +26,7 @@ class _KuGouTabBarViewState extends State<KuGouTabBarView> {
     return Listener(
       onPointerDown: (PointerDownEvent event) {
         setState(() {
-          if (event.position.dx <= MediaQuery.of(context).size.width / 3 && widget.controller.index == 0) {
+          if (event.position.dx <= 50.0 && widget.controller.index == 0) {
             tabbarOpenEnable = false;
           } else {
             tabbarOpenEnable = true;
