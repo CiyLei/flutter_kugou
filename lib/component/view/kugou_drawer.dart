@@ -77,6 +77,8 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
           }
         },
         child: SingleChildScrollView(
+          // 禁止在ios中的弹簧效果
+          physics: ClampingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           controller: _controller,
           child: Row(
