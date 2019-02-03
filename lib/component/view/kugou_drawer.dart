@@ -208,7 +208,7 @@ class _KuGouDrawerState extends State<KuGouDrawer> {
             child: _buildItem(
               ItemModel(
                 icon: Icons.settings,
-                title: "说明",
+                title: "设置",
                 onTap: () {},
               ),
             ),
@@ -235,7 +235,7 @@ class _KuGouDrawerState extends State<KuGouDrawer> {
               ),
               Text(
                 model.title,
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.black, fontSize: 16.0),
               ),
               Expanded(
                 child: Padding(
@@ -246,7 +246,7 @@ class _KuGouDrawerState extends State<KuGouDrawer> {
                       model.description != null
                           ? Text(
                               model.description,
-                              style: TextStyle(color: Colors.grey),
+                              style: TextStyle(color: Colors.grey, fontSize: 16.0),
                             )
                           : SizedBox(),
                       SizedBox(
