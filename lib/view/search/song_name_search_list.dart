@@ -40,14 +40,14 @@ class _SongNameSearchListState extends State<SongNameSearchList> {
                       text: widget.songs[index].startsWith(widget.search) ? widget.search : "",
                       style: TextStyle(
                           color: Theme.of(context).primaryColor,
-                          fontSize: 12.0),
+                          fontSize: 14.0),
                       children: widget.songs[index].split(widget.search).map((val) {
                         return val.isEmpty
                             ? TextSpan()
                             : TextSpan(
                             text: val,
                             style: TextStyle(
-                                color: Colors.black, fontSize: 12.0),
+                                color: Colors.black, fontSize: 14.0),
                             children: [
                               TextSpan(
                                 text: !widget.songs[index].endsWith(val) ||
@@ -56,7 +56,7 @@ class _SongNameSearchListState extends State<SongNameSearchList> {
                                     : "",
                                 style: TextStyle(
                                     color: Theme.of(context).primaryColor,
-                                    fontSize: 12.0),
+                                    fontSize: 14.0),
                               )
                             ]);
                       }).toList(),

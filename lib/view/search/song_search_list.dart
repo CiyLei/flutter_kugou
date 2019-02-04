@@ -78,14 +78,14 @@ class _SongSearchListState
                     text: data.songname.startsWith(bloc.song) ? bloc.song : "",
                     style: TextStyle(
                         color: Theme.of(context).primaryColor,
-                        fontSize: 14.0),
+                        fontSize: 16.0),
                     children: data.songname.split(bloc.song).map((val) {
                       return val.isEmpty
                           ? TextSpan()
                           : TextSpan(
                           text: val,
                           style: TextStyle(
-                              color: Colors.black, fontSize: 14.0),
+                              color: Colors.black, fontSize: 16.0),
                           children: [
                             TextSpan(
                               text: !data.songname.endsWith(val) ||
@@ -94,7 +94,7 @@ class _SongSearchListState
                                   : "",
                               style: TextStyle(
                                   color: Theme.of(context).primaryColor,
-                                  fontSize: 14.0),
+                                  fontSize: 16.0),
                             )
                           ]);
                     }).toList(),
@@ -134,9 +134,9 @@ class _SongSearchListState
                     style: TextStyle(color: Colors.grey, fontSize: 8.0),
                   ),
                 ),
-          SizedBox(
-            width: 10.0,
-          ),
+//          SizedBox(
+//            width: 10.0,
+//          ),
           IconButton(
             icon: Icon(Icons.more_horiz),
             onPressed: onMoreTap,

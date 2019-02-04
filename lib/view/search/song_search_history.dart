@@ -40,7 +40,7 @@ class _SongSearchHistoryState extends State<SongSearchHistory> {
                           "清空搜索历史",
                           style: TextStyle(
                               color: Theme.of(context).primaryColor,
-                              fontSize: 12.0),
+                              fontSize: 14.0),
                         ),
                       ),
                     ))
@@ -55,7 +55,7 @@ class _SongSearchHistoryState extends State<SongSearchHistory> {
                         ),
                         Text(widget.history[index],
                             style: TextStyle(
-                                color: Colors.black, fontSize: 12.0)),
+                                color: Colors.black, fontSize: 14.0)),
                         Expanded(
                           child: SizedBox(),
                         ),
