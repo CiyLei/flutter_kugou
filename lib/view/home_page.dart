@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_kugou/component/base_state.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:flutter_kugou/component/navigator/kugou_navigator.dart';
 import 'package:flutter_kugou/component/view/kugou_drawer.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_kugou/view/home_page_bloc.dart';
 import 'package:flutter_kugou/view/listen/home_listen.dart';
 import 'package:flutter_kugou/view/look/home_look.dart';
 import 'package:flutter_kugou/view/search/song_search.dart';
+import 'package:flutter_kugou/view/search/song_search_bloc.dart';
 import 'package:flutter_kugou/view/sing/home_sing.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,12 +20,11 @@ class HomePage extends StatefulWidget {
   }
 }
 
-class _HomePageState extends State<HomePage>
+class _HomePageState extends BaseState<HomePage, HomePageBloc>
     with SingleTickerProviderStateMixin, TickerProviderStateMixin {
   int _currentIndex;
   TabController _tabController;
   final _titleList = ["我", "听", "看", "唱"];
-  HomePageBloc _bloc;
   AnimationController _searchHeightController;
 
   @override
@@ -35,13 +36,16 @@ class _HomePageState extends State<HomePage>
       _changeNavigationTitle(_tabController.index);
     });
 
-    _bloc = BlocProvider.of<HomePageBloc>(context);
-    _bloc.searchHeightStream.listen((val) {
+    // 监听是否展开和关闭搜索栏
+    bloc.searchHeightStream.listen((val) {
       _searchHeightController.animateTo(val);
     });
 
     _searchHeightController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300), lowerBound: 0.0, upperBound: 50.0);
+        vsync: this,
+        duration: const Duration(milliseconds: 300),
+        lowerBound: 0.0,
+        upperBound: 50.0);
   }
 
   @override
@@ -55,8 +59,7 @@ class _HomePageState extends State<HomePage>
       if (_currentIndex != index) {
         _currentIndex = index;
         _tabController.animateTo(index);
-        if (!_bloc.searchIsExpand)
-          _bloc.expandSearch();
+        if (!bloc.searchIsExpand) bloc.expandSearch();
       }
     });
   }
@@ -66,11 +69,7 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       appBar: _buildNavigationBar(context),
       body: DecoratedBox(
-        decoration: BoxDecoration(
-            color: Theme
-                .of(context)
-                .primaryColor
-        ),
+        decoration: BoxDecoration(color: Theme.of(context).primaryColor),
         child: Stack(
           children: <Widget>[
             KuGouTabBarView(
@@ -78,7 +77,10 @@ class _HomePageState extends State<HomePage>
               children: [Me(), Listen(), Look(), Sing()],
             ),
             _buildSearch(context, "搜索", onTap: () {
-              KuGouNavigator.of(context).push(SongSearch());
+              KuGouNavigator.of(context).push(BlocProvider<SongSearchBloc>(
+                child: SongSearch(),
+                bloc: SongSearchBloc(),
+              ));
             }),
           ],
         ),
@@ -86,69 +88,65 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget _buildSearch(BuildContext context, String search, {GestureTapCallback onTap}) {
+  Widget _buildSearch(BuildContext context, String search,
+      {GestureTapCallback onTap}) {
     return AnimatedBuilder(
-        animation: _searchHeightController, builder: (buildContext, child) {
-      return Transform.translate(
-        offset: Offset(0.0, -_searchHeightController.value),
-        child: Container(
-          alignment: Alignment.center,
-          height: 50.0,
-          padding: const EdgeInsets.only(bottom: 5.0, left: 15.0, right: 15.0),
-          color: Theme
-              .of(context)
-              .primaryColor,
-          child: GestureDetector(
-            onTap: onTap,
-            behavior: HitTestBehavior.opaque,
+        animation: _searchHeightController,
+        builder: (buildContext, child) {
+          return Transform.translate(
+            offset: Offset(0.0, -_searchHeightController.value),
             child: Container(
-              height: 30.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                color: Colors.white24,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.search,
-                    size: 14.0,
-                    color: Colors.white,
+              alignment: Alignment.center,
+              height: 50.0,
+              padding:
+                  const EdgeInsets.only(bottom: 5.0, left: 15.0, right: 15.0),
+              color: Theme.of(context).primaryColor,
+              child: GestureDetector(
+                onTap: onTap,
+                behavior: HitTestBehavior.opaque,
+                child: Container(
+                  height: 30.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                    color: Colors.white24,
                   ),
-                  SizedBox(
-                    width: 5.0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.search,
+                        size: 14.0,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 5.0,
+                      ),
+                      Text(
+                        search,
+                        style: TextStyle(color: Colors.white, fontSize: 14.0),
+                      )
+                    ],
                   ),
-                  Text(
-                    search,
-                    style: TextStyle(color: Colors.white, fontSize: 14.0),
-                  )
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-      );
-    });
+          );
+        });
   }
 
   Widget _buildNavigationBar(BuildContext context) {
     return CupertinoNavigationBar(
-      border: Border.all(color: Theme
-          .of(context)
-          .primaryColor),
-      backgroundColor: Theme
-          .of(context)
-          .primaryColor,
+      border: Border.all(color: Theme.of(context).primaryColor),
+      backgroundColor: Theme.of(context).primaryColor,
       middle: Padding(
         padding: const EdgeInsets.only(left: 20.0, right: 20.0),
         child: Flex(
           direction: Axis.horizontal,
           children: _titleList
-              .map((title) =>
-              Expanded(
-                flex: 1,
-                child: _buildNavigationTitle(title),
-              ))
+              .map((title) => Expanded(
+                    flex: 1,
+                    child: _buildNavigationTitle(title),
+                  ))
               .toList(),
         ),
       ),
@@ -167,13 +165,20 @@ class _HomePageState extends State<HomePage>
           return [
             PopupMenuItem<String>(
                 child: _buildMenuItem(Icons.music_note, "听歌识曲")),
-            PopupMenuDivider(height: 1.0,),
+            PopupMenuDivider(
+              height: 1.0,
+            ),
             PopupMenuItem<String>(child: _buildMenuItem(Icons.scanner, "扫一扫")),
-            PopupMenuDivider(height: 1.0,),
+            PopupMenuDivider(
+              height: 1.0,
+            ),
             PopupMenuItem<String>(child: _buildMenuItem(Icons.code, "我的二维码")),
           ];
         },
-        icon: Icon(Icons.add, color: Colors.white,),
+        icon: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
         offset: Offset(0.0, 50.0),
       ),
     );
@@ -200,9 +205,18 @@ class _HomePageState extends State<HomePage>
       alignment: Alignment.center,
       child: Row(
         children: <Widget>[
-          Icon(icon, color: Colors.grey, size: 20,),
-          SizedBox(width: 10.0,),
-          Text(title, style: TextStyle(fontSize: 14.0),)
+          Icon(
+            icon,
+            color: Colors.grey,
+            size: 20,
+          ),
+          SizedBox(
+            width: 10.0,
+          ),
+          Text(
+            title,
+            style: TextStyle(fontSize: 14.0),
+          )
         ],
       ),
     );
