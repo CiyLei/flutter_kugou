@@ -37,7 +37,7 @@ class _SongNameSearchListState extends State<SongNameSearchList> {
                   ),
                   RichText(
                     text: TextSpan(
-                      text: widget.search,
+                      text: widget.songs[index].startsWith(widget.search) ? widget.search : "",
                       style: TextStyle(
                           color: Theme.of(context).primaryColor,
                           fontSize: 12.0),

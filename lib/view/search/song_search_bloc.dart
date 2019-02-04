@@ -16,7 +16,7 @@ class SongSearchBloc extends BlocBase {
   StreamController<List<String>> _searchHistoryController =
       StreamController.broadcast();
   Stream<List<String>> get searchHistory => _searchHistoryController.stream;
-  List<String> historyCache = null;
+  List<String> historyCache = List();
 
   void searchSongName(String songName) {
     if (songName.isNotEmpty) {
@@ -45,7 +45,6 @@ class SongSearchBloc extends BlocBase {
   // 获取搜索记录
   Future<List<String>> getSearchHistory() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    print("--${sharedPreferences.getStringList("SearchHistory")}--");
     return sharedPreferences.getStringList("SearchHistory") ?? [];
   }
 

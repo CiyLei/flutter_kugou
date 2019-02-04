@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_kugou/component/base_state.dart';
+import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:flutter_kugou/component/navigator/kugou_navigator.dart';
 import 'package:flutter_kugou/view/search/song_search_bean.dart';
 import 'package:flutter_kugou/view/search/song_search_bloc.dart';
 import 'package:flutter_kugou/view/search/song_search_history.dart';
 import 'package:flutter_kugou/view/search/song_name_search_list.dart';
+import 'package:flutter_kugou/view/search/song_search_list.dart';
+import 'package:flutter_kugou/view/search/song_search_list_bloc.dart';
 
 class SongSearch extends StatefulWidget {
   @override
@@ -67,7 +70,6 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
                         stream: bloc.searchHistory,
                         builder: (BuildContext context,
                             AsyncSnapshot<List<String>> historyData) {
-                          print(historyData.data);
                           return SongSearchHistory(historyData.data,
                               onItemTap: (index) {
                             searchSong(historyData.data[index]);
@@ -80,14 +82,14 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
                       )
                     : SongNameSearchList(
                         snapshot.data.data.map((val) => val.keyword).toList(),
-                        search: _search,
-                        onItemTap: (index) {
+                        search: _search, onItemTap: (index) {
                         searchSong(snapshot.data.data[index].keyword);
                       });
               },
             )
-          : Container(
-              color: Colors.green,
+          : BlocProvider<SongSearchListBloc>(
+              child: SongSearchList(),
+              bloc: SongSearchListBloc(_search),
             ),
     );
   }
