@@ -116,6 +116,9 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation> {
           activeTrackColor: Theme.of(context).primaryColor,
           inactiveTrackColor: Colors.grey,
           thumbColor: Theme.of(context).primaryColor,
+
+          activeTickMarkColor: Theme.of(context).primaryColor,
+          inactiveTickMarkColor: Colors.grey,
         ),
         child: Slider(
           value: progress,
@@ -124,8 +127,10 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation> {
               this.progress = value.floorToDouble();
             });
           },
+          label: "$progress",
           min: 0.0,
           max: 100.0,
+          divisions: 100,
         ),
       ),
     );
