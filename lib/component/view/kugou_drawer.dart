@@ -15,12 +15,14 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
   double _scrollOffset;
   bool _isDrawer;
   double _progress;
+  bool drawerEnable;
 
   bool get isDrawer => _isDrawer;
 
   @override
   void initState() {
     super.initState();
+    drawerEnable = true;
     _isDrawer = false;
     _progress = 0.0;
   }
@@ -30,7 +32,7 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
     super.didChangeDependencies();
     _scrollOffset = MediaQuery.of(context).size.width * 0.8;
     _controller = ScrollController(initialScrollOffset: _scrollOffset);
-    _controller.addListener((){
+    _controller.addListener(() {
       setState(() {
         _progress = (_scrollOffset - _controller.offset) / _scrollOffset;
       });
@@ -44,13 +46,13 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
   }
 
   static KuGouScaffoldState of(BuildContext context) {
-    return context.ancestorStateOfType(const TypeMatcher<KuGouScaffoldState>()) as KuGouScaffoldState;
+    return context.ancestorStateOfType(const TypeMatcher<KuGouScaffoldState>())
+        as KuGouScaffoldState;
   }
 
   void openDrawer() {
     _controller.animateTo(0.0,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.linear);
+        duration: const Duration(milliseconds: 200), curve: Curves.linear);
     setState(() {
       _isDrawer = true;
     });
@@ -58,8 +60,7 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
 
   void closeDrawer() {
     _controller.animateTo(_scrollOffset,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.linear);
+        duration: const Duration(milliseconds: 200), curve: Curves.linear);
     setState(() {
       _isDrawer = false;
     });
@@ -76,9 +77,15 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
             openDrawer();
           }
         },
-        child: SingleChildScrollView(
+        child: NotificationListener<KuGouDrawerNotification>(
+          onNotification: (notification) {
+            setState(() {
+              this.drawerEnable = notification.drawerEnable;
+            });
+          },
+            child: SingleChildScrollView(
           // 禁止在ios中的弹簧效果
-          physics: ClampingScrollPhysics(),
+          physics: drawerEnable ? ClampingScrollPhysics() : NeverScrollableScrollPhysics(),
           scrollDirection: Axis.horizontal,
           controller: _controller,
           child: Row(
@@ -94,28 +101,35 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
                     alignment: Alignment.center,
                     child: widget.child,
                     foregroundDecoration: BoxDecoration(
-                        color: Color.fromRGBO(0, 0, 0, _progress * 0.5)
-                    ),
+                        color: Color.fromRGBO(0, 0, 0, _progress * 0.5)),
                   ),
-                  _isDrawer ? GestureDetector(
-                    onTap: () {
-                      closeDrawer();
-                    },
-                    child: AbsorbPointer(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                      ),
-                    ),
-                  ) : SizedBox()
+                  _isDrawer
+                      ? GestureDetector(
+                          onTap: () {
+                            closeDrawer();
+                          },
+                          child: AbsorbPointer(
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                            ),
+                          ),
+                        )
+                      : SizedBox()
                 ],
               ),
             ],
           ),
-        ),
+        )),
       ),
     );
   }
+}
+
+class KuGouDrawerNotification extends Notification {
+  bool drawerEnable;
+
+  KuGouDrawerNotification({this.drawerEnable = true});
 }
 
 class KuGouDrawer extends StatefulWidget {
@@ -184,8 +198,7 @@ class _KuGouDrawerState extends State<KuGouDrawer> {
                           activeColor: Colors.lightBlue,
                           onChanged: (value) {
                             this.setState(() {
-                              _notificationBarLyrics =
-                              !_notificationBarLyrics;
+                              _notificationBarLyrics = !_notificationBarLyrics;
                             });
                           })));
                 }
@@ -193,9 +206,13 @@ class _KuGouDrawerState extends State<KuGouDrawer> {
               },
               separatorBuilder: (BuildContext context, int index) {
                 if (index == 4)
-                  return Divider( height: 30.0, );
+                  return Divider(
+                    height: 30.0,
+                  );
                 else if (index == 12)
-                  return Divider( height: 10.0, );
+                  return Divider(
+                    height: 10.0,
+                  );
                 return SizedBox();
               },
             ),
@@ -246,7 +263,8 @@ class _KuGouDrawerState extends State<KuGouDrawer> {
                       model.description != null
                           ? Text(
                               model.description,
-                              style: TextStyle(color: Colors.grey, fontSize: 14.0),
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 14.0),
                             )
                           : SizedBox(),
                       SizedBox(

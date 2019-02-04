@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
+import 'package:flutter_kugou/component/navigator/kugou_navigator.dart';
 import 'package:flutter_kugou/component/view/kugou_drawer.dart';
 import 'package:flutter_kugou/component/view/kugou_home_tabbar.dart';
 import 'package:flutter_kugou/view//me/home_me.dart';
 import 'package:flutter_kugou/view/home_page_bloc.dart';
 import 'package:flutter_kugou/view/listen/home_listen.dart';
 import 'package:flutter_kugou/view/look/home_look.dart';
+import 'package:flutter_kugou/view/search/song_search.dart';
 import 'package:flutter_kugou/view/sing/home_sing.dart';
 
 class HomePage extends StatefulWidget {
@@ -75,14 +77,16 @@ class _HomePageState extends State<HomePage>
               controller: _tabController,
               children: [Me(), Listen(), Look(), Sing()],
             ),
-            _buildSearch(context, "SING女团 团团圆圆"),
+            _buildSearch(context, "搜索", onTap: () {
+              KuGouNavigator.of(context).push(SongSearch());
+            }),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSearch(BuildContext context, String search) {
+  Widget _buildSearch(BuildContext context, String search, {GestureTapCallback onTap}) {
     return AnimatedBuilder(
         animation: _searchHeightController, builder: (buildContext, child) {
       return Transform.translate(
@@ -94,28 +98,32 @@ class _HomePageState extends State<HomePage>
           color: Theme
               .of(context)
               .primaryColor,
-          child: Container(
-            height: 30.0,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(25.0)),
-              color: Colors.white24,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  Icons.search,
-                  size: 14.0,
-                  color: Colors.white,
-                ),
-                SizedBox(
-                  width: 5.0,
-                ),
-                Text(
-                  search,
-                  style: TextStyle(color: Colors.white, fontSize: 14.0),
-                )
-              ],
+          child: GestureDetector(
+            onTap: onTap,
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              height: 30.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                color: Colors.white24,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.search,
+                    size: 14.0,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 5.0,
+                  ),
+                  Text(
+                    search,
+                    style: TextStyle(color: Colors.white, fontSize: 14.0),
+                  )
+                ],
+              ),
             ),
           ),
         ),

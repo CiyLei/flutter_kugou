@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
+import 'package:flutter_kugou/component/navigator/kugou_navigator.dart';
 import 'package:flutter_kugou/component/view/kugou_bottom_navigation.dart';
 import 'package:flutter_kugou/component/view/kugou_drawer.dart';
 import 'package:flutter_kugou/view//home_page.dart';
@@ -40,9 +41,11 @@ class _KuGouAppState extends State<KuGouApp> {
       drawer: KuGouDrawer(),
       child: Stack(
         children: <Widget>[
-          BlocProvider<HomePageBloc>(
-            child: HomePage(),
-            bloc: HomePageBloc(),
+          KuGouNavigator(
+            child: BlocProvider<HomePageBloc>(
+              child: HomePage(),
+              bloc: HomePageBloc(),
+            ),
           ),
           Positioned(
             bottom: 0.0,
