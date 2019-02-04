@@ -14,12 +14,17 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
   bool isFirst = true;
   FocusNode _focusNode;
   String _search;
+  TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
     _search = "";
+    _searchController = TextEditingController();
     _focusNode = FocusNode();
+    _focusNode.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -47,17 +52,22 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
           ],
         ),
       ),
-      body: StreamBuilder(
-        initialData: null,
-        stream: bloc.songSearch,
-        builder: (BuildContext context, AsyncSnapshot<SearchBean> snapshot) {
-          return snapshot.data == null
-              ? Container(
-                  color: Colors.orangeAccent,
-                )
-              : _buildSearchList(snapshot);
-        },
-      ),
+      body: _focusNode.hasFocus || _search.isEmpty
+          ? StreamBuilder(
+              initialData: bloc.searchCache,
+              stream: bloc.songSearch,
+              builder:
+                  (BuildContext context, AsyncSnapshot<SearchBean> snapshot) {
+                return snapshot.data == null
+                    ? Container(
+                        color: Colors.orangeAccent,
+                      )
+                    : _buildSearchList(snapshot);
+              },
+            )
+          : Container(
+              color: Colors.green,
+            ),
     );
   }
 
@@ -66,7 +76,9 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
       itemBuilder: (BuildContext context, int index) {
         return Material(
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              searchSong(snapshot.data.data[index].keyword);
+            },
             child: Padding(
               padding:
                   const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 15.0),
@@ -124,6 +136,18 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
     );
   }
 
+  void searchSong(String songName, {isEdit = false}) {
+    setState(() {
+      _search = songName;
+      bloc.searchSong(_search);
+      if (!isEdit) {
+        _focusNode.unfocus();
+        _searchController.text = _search;
+
+      }
+    });
+  }
+
   Widget _buildSearch(String label) {
     return Stack(
       alignment: Alignment.centerLeft,
@@ -139,11 +163,9 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
           child: TextField(
             focusNode: _focusNode,
             onChanged: (str) {
-              setState(() {
-                _search = str;
-                bloc.searchSong(_search);
-              });
+              searchSong(str, isEdit: true);
             },
+            controller: _searchController,
             cursorColor: Colors.white,
             style: TextStyle(color: Colors.white, fontSize: 14.0),
             decoration: InputDecoration(
