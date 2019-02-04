@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter_kugou/component/net/request_warehouse.dart';
 import 'package:flutter_kugou/view/search/song_search_bean.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class SongSearchBloc extends BlocBase{
@@ -10,6 +11,9 @@ class SongSearchBloc extends BlocBase{
   StreamController<SearchBean> _songSearchController = StreamController.broadcast();
   Stream<SearchBean> get songSearch => _songSearchController.stream;
   SearchBean searchCache = null;
+
+  StreamController<List<String>> _searchHistoryController = StreamController.broadcast();
+  Stream<List<String>> get searchHistory => _searchHistoryController.stream;
 
   void searchSong(String song) {
     if (song.isNotEmpty) {
@@ -22,9 +26,45 @@ class SongSearchBloc extends BlocBase{
     _songSearchController.add(null);
   }
 
+  // 读取搜索记录
+  void readSearchHistory() async{
+    _searchHistoryController.add(await getSearchHistory());
+  }
+
+  // 保存搜索记录
+  void saveSearchHistory(String str) async {
+    deleteSearchHistory(str, inserStr: str);
+  }
+
+  // 获取搜索记录
+  Future<List<String>> getSearchHistory() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    return sharedPreferences.getStringList("SearchHistory") ?? [];
+  }
+
+  // 删除某个搜索记录
+  void deleteSearchHistory(String str, {String inserStr}) async {
+    List<String> searchHistory = await getSearchHistory();
+    searchHistory.remove(str);
+    if (inserStr != null && inserStr.isNotEmpty) {
+      searchHistory.insert(0, inserStr);
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setStringList("SearchHistory", searchHistory);
+    _searchHistoryController.add(searchHistory);
+  }
+
+  // 删除全部的搜索记录
+  void deleteAllSearchHistory() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setStringList("SearchHistory", []);
+    _searchHistoryController.add([]);
+  }
+
   @override
   void dispose() {
     _songSearchController.close();
+    _searchHistoryController.close();
   }
 
 }

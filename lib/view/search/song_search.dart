@@ -4,7 +4,6 @@ import 'package:flutter_kugou/component/base_state.dart';
 import 'package:flutter_kugou/component/navigator/kugou_navigator.dart';
 import 'package:flutter_kugou/view/search/song_search_bean.dart';
 import 'package:flutter_kugou/view/search/song_search_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SongSearch extends StatefulWidget {
   @override
@@ -16,7 +15,6 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
   FocusNode _focusNode;
   String _search;
   TextEditingController _searchController;
-  List<String> searchHistory;
 
   @override
   void initState() {
@@ -27,12 +25,7 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
     _focusNode.addListener(() {
       setState(() {});
     });
-    searchHistory = [];
-    getSearchHistory().then((val) {
-      setState(() {
-        searchHistory = val;
-      });
-    });
+    bloc.readSearchHistory();
   }
 
   @override
@@ -67,13 +60,21 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
               builder:
                   (BuildContext context, AsyncSnapshot<SearchBean> snapshot) {
                 return snapshot.data == null
-                    ? _buildSearchHisotyList(searchHistory, onItemTap: (index) {
-                        searchSong(searchHistory[index]);
-                      }, onClearTap: () {
-                        deleteAllSearchHistory();
-                      }, onItemDeleteTap: (index) {
-                        deleteSearchHistory(searchHistory[index]);
-                      })
+                    ? StreamBuilder(
+                        initialData: List<String>(),
+                        stream: bloc.searchHistory,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<String>> snapshot) {
+                          return _buildSearchHisotyList(snapshot.data,
+                              onItemTap: (index) {
+                            searchSong(snapshot.data[index]);
+                          }, onClearTap: () {
+                            bloc.deleteAllSearchHistory();
+                          }, onItemDeleteTap: (index) {
+                            bloc.deleteSearchHistory(snapshot.data[index]);
+                          });
+                        },
+                      )
                     : _buildSearchList(
                         snapshot.data.data.map((val) => val.keyword).toList(),
                         onItemTap: (index) {
@@ -232,42 +233,8 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
       if (!isEdit) {
         _focusNode.unfocus();
         _searchController.text = _search;
-        saveSearchHistory(songName);
+        bloc.saveSearchHistory(songName);
       }
-    });
-  }
-
-  // 保存搜索记录
-  void saveSearchHistory(String str) async {
-    deleteSearchHistory(str, inserStr: str);
-  }
-
-  // 读取搜索记录
-  Future<List<String>> getSearchHistory() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getStringList("SearchHistory") ?? [];
-  }
-
-  // 删除某个搜索记录
-  void deleteSearchHistory(String str, {String inserStr}) async {
-    List<String> searchHistory = await getSearchHistory();
-    searchHistory.remove(str);
-    if (inserStr != null && inserStr.isNotEmpty) {
-      searchHistory.insert(0, inserStr);
-    }
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences.setStringList("SearchHistory", searchHistory);
-    setState(() {
-      this.searchHistory = searchHistory;
-    });
-  }
-
-  // 删除全部的搜索记录
-  void deleteAllSearchHistory() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences.setStringList("SearchHistory", []);
-    setState(() {
-      this.searchHistory = [];
     });
   }
 
