@@ -80,6 +80,7 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
         child: NotificationListener<KuGouDrawerNotification>(
           onNotification: (notification) {
             setState(() {
+              // 接收到是否禁止侧滑的消息
               this.drawerEnable = notification.drawerEnable;
             });
           },
@@ -126,6 +127,7 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
   }
 }
 
+// 是否禁止侧滑菜单的载体
 class KuGouDrawerNotification extends Notification {
   bool drawerEnable;
 
