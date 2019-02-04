@@ -17,7 +17,7 @@ class RequestWareHouse {
     return _instance;
   }
 
-  Future<SearchBean> getSearchSong(String songName) async{
+  Future<SearchBean> getSearchSongName(String songName) async{
     String response = await NetUtil.GET(
       url: "http://mobilecdngz.kugou.com/new/app/i/search.php",
       params: {

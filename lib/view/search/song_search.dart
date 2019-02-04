@@ -5,7 +5,7 @@ import 'package:flutter_kugou/component/navigator/kugou_navigator.dart';
 import 'package:flutter_kugou/view/search/song_search_bean.dart';
 import 'package:flutter_kugou/view/search/song_search_bloc.dart';
 import 'package:flutter_kugou/view/search/song_search_history.dart';
-import 'package:flutter_kugou/view/search/song_search_list.dart';
+import 'package:flutter_kugou/view/search/song_name_search_list.dart';
 
 class SongSearch extends StatefulWidget {
   @override
@@ -78,7 +78,7 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
                           });
                         },
                       )
-                    : SongSearchList(
+                    : SongNameSearchList(
                         snapshot.data.data.map((val) => val.keyword).toList(),
                         search: _search,
                         onItemTap: (index) {
@@ -96,7 +96,7 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
   void searchSong(String songName, {isEdit = false}) {
     setState(() {
       _search = songName;
-      bloc.searchSong(_search);
+      bloc.searchSongName(_search);
       if (!isEdit) {
         _focusNode.unfocus();
         _searchController.text = _search;

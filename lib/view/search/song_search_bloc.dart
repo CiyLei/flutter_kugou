@@ -18,9 +18,9 @@ class SongSearchBloc extends BlocBase {
   Stream<List<String>> get searchHistory => _searchHistoryController.stream;
   List<String> historyCache = null;
 
-  void searchSong(String song) {
-    if (song.isNotEmpty) {
-      RequestWareHouse.instance().getSearchSong(song).then((searchBean) {
+  void searchSongName(String songName) {
+    if (songName.isNotEmpty) {
+      RequestWareHouse.instance().getSearchSongName(songName).then((searchBean) {
         searchCache = searchBean;
         _songSearchController.add(searchBean);
       });

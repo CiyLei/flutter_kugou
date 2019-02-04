@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class SongSearchList extends StatefulWidget {
+class SongNameSearchList extends StatefulWidget {
 
   List<String> songs;
   String search;
   ValueChanged<int> onItemTap;
 
 
-  SongSearchList(this.songs, {this.search, this.onItemTap});
+  SongNameSearchList(this.songs, {this.search, this.onItemTap});
 
   @override
-  _SongSearchListState createState() => _SongSearchListState();
+  _SongNameSearchListState createState() => _SongNameSearchListState();
 }
 
-class _SongSearchListState extends State<SongSearchList> {
+class _SongNameSearchListState extends State<SongNameSearchList> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
