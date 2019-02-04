@@ -5,15 +5,18 @@ import 'package:flutter_kugou/component/net/request_warehouse.dart';
 import 'package:flutter_kugou/view/search/song_search_bean.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+class SongSearchBloc extends BlocBase {
 
-class SongSearchBloc extends BlocBase{
-
-  StreamController<SearchBean> _songSearchController = StreamController.broadcast();
+  StreamController<SearchBean> _songSearchController =
+      StreamController.broadcast();
   Stream<SearchBean> get songSearch => _songSearchController.stream;
+  // 如果StreamBuilder被重新build的话，就会加载初始值，所以这里做了保存。这样StreamBuilder的AsyncSnapshot就没什么意义了
   SearchBean searchCache = null;
 
-  StreamController<List<String>> _searchHistoryController = StreamController.broadcast();
+  StreamController<List<String>> _searchHistoryController =
+      StreamController.broadcast();
   Stream<List<String>> get searchHistory => _searchHistoryController.stream;
+  List<String> historyCache = null;
 
   void searchSong(String song) {
     if (song.isNotEmpty) {
@@ -21,14 +24,17 @@ class SongSearchBloc extends BlocBase{
         searchCache = searchBean;
         _songSearchController.add(searchBean);
       });
+      return;
     }
     searchCache = null;
     _songSearchController.add(null);
   }
 
   // 读取搜索记录
-  void readSearchHistory() async{
-    _searchHistoryController.add(await getSearchHistory());
+  void readSearchHistory() async {
+    var list = await getSearchHistory();
+    historyCache = list;
+    _searchHistoryController.add(list);
   }
 
   // 保存搜索记录
@@ -39,6 +45,7 @@ class SongSearchBloc extends BlocBase{
   // 获取搜索记录
   Future<List<String>> getSearchHistory() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    print("--${sharedPreferences.getStringList("SearchHistory")}--");
     return sharedPreferences.getStringList("SearchHistory") ?? [];
   }
 
@@ -51,6 +58,7 @@ class SongSearchBloc extends BlocBase{
     }
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setStringList("SearchHistory", searchHistory);
+    historyCache = searchHistory;
     _searchHistoryController.add(searchHistory);
   }
 
@@ -58,6 +66,7 @@ class SongSearchBloc extends BlocBase{
   void deleteAllSearchHistory() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setStringList("SearchHistory", []);
+    historyCache = [];
     _searchHistoryController.add([]);
   }
 
@@ -66,5 +75,4 @@ class SongSearchBloc extends BlocBase{
     _songSearchController.close();
     _searchHistoryController.close();
   }
-
 }

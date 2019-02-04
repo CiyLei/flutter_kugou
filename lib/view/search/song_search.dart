@@ -4,6 +4,8 @@ import 'package:flutter_kugou/component/base_state.dart';
 import 'package:flutter_kugou/component/navigator/kugou_navigator.dart';
 import 'package:flutter_kugou/view/search/song_search_bean.dart';
 import 'package:flutter_kugou/view/search/song_search_bloc.dart';
+import 'package:flutter_kugou/view/search/song_search_history.dart';
+import 'package:flutter_kugou/view/search/song_search_list.dart';
 
 class SongSearch extends StatefulWidget {
   @override
@@ -61,22 +63,24 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
                   (BuildContext context, AsyncSnapshot<SearchBean> snapshot) {
                 return snapshot.data == null
                     ? StreamBuilder(
-                        initialData: List<String>(),
+                        initialData: bloc.historyCache,
                         stream: bloc.searchHistory,
                         builder: (BuildContext context,
-                            AsyncSnapshot<List<String>> snapshot) {
-                          return _buildSearchHisotyList(snapshot.data,
+                            AsyncSnapshot<List<String>> historyData) {
+                          print(historyData.data);
+                          return SongSearchHistory(historyData.data,
                               onItemTap: (index) {
-                            searchSong(snapshot.data[index]);
+                            searchSong(historyData.data[index]);
                           }, onClearTap: () {
                             bloc.deleteAllSearchHistory();
                           }, onItemDeleteTap: (index) {
-                            bloc.deleteSearchHistory(snapshot.data[index]);
+                            bloc.deleteSearchHistory(historyData.data[index]);
                           });
                         },
                       )
-                    : _buildSearchList(
+                    : SongSearchList(
                         snapshot.data.data.map((val) => val.keyword).toList(),
+                        search: _search,
                         onItemTap: (index) {
                         searchSong(snapshot.data.data[index].keyword);
                       });
@@ -85,143 +89,6 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
           : Container(
               color: Colors.green,
             ),
-    );
-  }
-
-  Widget _buildSearchHisotyList(List<String> history,
-      {ValueChanged<int> onItemTap,
-      GestureTapCallback onClearTap,
-      ValueChanged<int> onItemDeleteTap}) {
-    return ListView.separated(
-      itemBuilder: (BuildContext context, int index) {
-        return Material(
-            child: InkWell(
-          onTap: () {
-            index == history.length ? onClearTap() : onItemTap(index);
-          },
-          child: Stack(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 10.0, bottom: 10.0, left: 15.0, right: 15.0),
-                child: (index == history.length)
-                    ? (history.length == 0
-                        ? SizedBox()
-                        : Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 10.0, bottom: 10.0),
-                              child: Text(
-                                "清空搜索历史",
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
-                                    fontSize: 12.0),
-                              ),
-                            ),
-                          ))
-                    : Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.search,
-                            color: Colors.grey[300],
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Text(history[index],
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 12.0)),
-                          Expanded(
-                            child: SizedBox(),
-                          ),
-                        ],
-                      ),
-              ),
-              index == history.length
-                  ? SizedBox()
-                  : Positioned(
-                      right: 0.0,
-                      top: 0.0,
-                      bottom: 0.0,
-                      child: IconButton(
-                          icon: Icon(
-                            Icons.close,
-                            color: Colors.grey[300],
-                          ),
-                          onPressed: () {
-                            onItemDeleteTap(index);
-                          }),
-                    )
-            ],
-          ),
-        ));
-      },
-      separatorBuilder: (BuildContext context, int index) => Divider(
-            height: 1.0,
-            indent: 15.0,
-          ),
-      itemCount: history.length + 1,
-    );
-  }
-
-  ListView _buildSearchList(List<String> songs, {ValueChanged<int> onItemTap}) {
-    return ListView.separated(
-      itemBuilder: (BuildContext context, int index) {
-        return Material(
-          child: InkWell(
-            onTap: () {
-              onItemTap(index);
-            },
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 15.0),
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.search,
-                    color: Colors.grey[300],
-                  ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      text: _search,
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontSize: 12.0),
-                      children: songs[index].split(_search).map((val) {
-                        return val.isEmpty
-                            ? TextSpan()
-                            : TextSpan(
-                                text: val,
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 12.0),
-                                children: [
-                                    TextSpan(
-                                      text: !songs[index].endsWith(val) ||
-                                              songs[index].endsWith(_search)
-                                          ? _search
-                                          : "",
-                                      style: TextStyle(
-                                          color: Theme.of(context).primaryColor,
-                                          fontSize: 12.0),
-                                    )
-                                  ]);
-                      }).toList(),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) => Divider(
-            height: 1.0,
-            indent: 15.0,
-          ),
-      itemCount: songs.length,
     );
   }
 
