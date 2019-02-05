@@ -14,8 +14,8 @@ class PlaySongInfoBean {
   int state;
 
   PlaySongInfoBean(
-      {@required this.songInfo,
-      @required this.duration,
-      @required this.position,
+      {this.songInfo,
+      this.duration = const Duration(seconds: 0),
+      this.position = const Duration(seconds: 0),
       this.state = 1});
 }

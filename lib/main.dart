@@ -57,12 +57,7 @@ class _KuGouAppState extends State<KuGouApp> {
               bottom: 0.0,
               left: 0.0,
               right: 0.0,
-              child: KuGouBottomNavigation(
-                imgUrl:
-                "http://imge.kugou.com/stdmusic/20161229/20161229233400375274.jpg",
-                song: "光年之外",
-                author: "G.E.M.邓紫棋",
-                playerStream: _bloc.playStream,),
+              child: KuGouBottomNavigation(playerStream: _bloc.playStream,),
             )
           ],
         ),
