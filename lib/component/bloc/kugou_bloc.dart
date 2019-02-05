@@ -9,12 +9,15 @@ import 'dart:math';
 class KuGouBloc extends BlocBase {
   VideoPlayerController _playerController;
 
+  // 播放音乐的Stream
   StreamController<PlaySongInfoBean> _playerStreamController =
       StreamController.broadcast();
   Stream<PlaySongInfoBean> get playStream => _playerStreamController.stream;
 
+  // 获取播放列表
   PlaySongListInfoBean get playListInfo => PlaySongListInfoBean(plays: _plays, index: _playIndex);
-  
+
+  // 获取现在播放的音乐学校
   SongInfoBean get playerInfo => ((_playIndex >= 0 && _playIndex < _plays.length) ? _plays[_playIndex] : null);
 
   List<SongInfoBean> _plays = [];

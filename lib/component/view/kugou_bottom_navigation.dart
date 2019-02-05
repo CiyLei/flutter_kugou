@@ -5,6 +5,7 @@ import 'package:flutter_kugou/bean/play_song_info_bean.dart';
 import 'package:flutter_kugou/bean/play_song_list_info_bean.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:flutter_kugou/component/bloc/kugou_bloc.dart';
+import 'dart:math';
 
 class KuGouBottomNavigation extends StatefulWidget {
   KuGouBottomNavigation({
@@ -20,13 +21,32 @@ class KuGouBottomNavigation extends StatefulWidget {
   _KuGouBottomNavigationState createState() => _KuGouBottomNavigationState();
 }
 
-class _KuGouBottomNavigationState extends State<KuGouBottomNavigation> {
+class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
+    with SingleTickerProviderStateMixin {
+  // 1为播放 0为暂停
+  int currentPlayerState = 0;
+  AnimationController _avatarController;
   double progress;
 
   @override
   void initState() {
     super.initState();
     progress = 0.0;
+    _avatarController = AnimationController(
+        vsync: this, upperBound: 2 * pi, duration: const Duration(seconds: 60));
+    _avatarController.addStatusListener((state) {
+      if (state == AnimationStatus.completed) {
+        _avatarController.reset();
+        _avatarController.forward();
+      }
+    });
+    widget.playerStream.listen((PlaySongInfoBean bean) {
+      if (bean.state != currentPlayerState && bean.state == 0)
+        _avatarController.stop();
+      else if (bean.state != currentPlayerState && bean.state == 1)
+        _avatarController.forward();
+      currentPlayerState = bean.state;
+    });
   }
 
   @override
@@ -129,20 +149,30 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, bottom: 5.0),
-                child: CircleAvatar(
-                  radius: 31.0,
-                  backgroundColor: Colors.grey[300],
-                  child: snapshot.data.songInfo == null
-                      ? CircleAvatar(
-                          radius: 30.0,
-                          backgroundColor: Theme.of(context).primaryColor,
-                        )
-                      : CircleAvatar(
-                          radius: 30.0,
-                          backgroundImage:
-                              NetworkImage(snapshot.data.songInfo.data.img),
-                        ),
-                ),
+                child: AnimatedBuilder(
+                    animation: _avatarController,
+                    builder: (_, _c) => Transform.rotate(
+                          angle: _avatarController.value,
+                          child: Material(
+                            elevation: 3.0,
+                            borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                            child: CircleAvatar(
+                              radius: 32.0,
+                              backgroundColor: Colors.grey[300],
+                              child: snapshot.data.songInfo == null
+                                  ? CircleAvatar(
+                                radius: 30.0,
+                                backgroundColor: Colors.grey,
+                              )
+                                  : CircleAvatar(
+                                radius: 30.0,
+                                backgroundColor: Colors.grey,
+                                backgroundImage: NetworkImage(
+                                    snapshot.data.songInfo.data.img),
+                              ),
+                            ),
+                          ),
+                        )),
               ),
             ],
           ),
@@ -184,15 +214,12 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation> {
           return _buildPlayerList(context, onOrderTap: () {
             print("切换顺序");
           }, onItemDeleteTap: (index) {
-//            print("删除$index");
             BlocProvider.of<KuGouBloc>(context).deletePlayer(index);
           }, onAllDeleteTap: () {
-//            print("删除全部");
             BlocProvider.of<KuGouBloc>(context).clearPlayerList();
           }, onCancelTap: () {
             Navigator.pop(context);
           }, onItemTap: (index) {
-//            print("点击$index");
             BlocProvider.of<KuGouBloc>(context).playOfIndex(index);
           });
         });
@@ -303,13 +330,13 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation> {
               alignment: Alignment.center,
               child: bean.index == index
                   ? CircleAvatar(
-                radius: 20.0,
-                backgroundImage: NetworkImage(bean.plays[index].data.img),
-              )
+                      radius: 20.0,
+                      backgroundImage: NetworkImage(bean.plays[index].data.img),
+                    )
                   : DefaultTextStyle(
-                style: TextStyle(color: Colors.black, fontSize: 12.0),
-                child: Text("${index < 9 ? "0" : ""}${index + 1}"),
-              ),
+                      style: TextStyle(color: Colors.black, fontSize: 12.0),
+                      child: Text("${index < 9 ? "0" : ""}${index + 1}"),
+                    ),
             ),
             Expanded(
               child: Column(
@@ -335,7 +362,10 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation> {
               ),
             ),
             IconButton(
-              icon: Icon(Icons.delete, color: Colors.grey,),
+              icon: Icon(
+                Icons.delete,
+                color: Colors.grey,
+              ),
               onPressed: () {
                 onItemDeleteTap(index);
               },

@@ -14,8 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-      ),
+      theme: ThemeData(),
       title: "酷狗",
       home: KuGouApp(),
     );
@@ -30,7 +29,6 @@ class KuGouApp extends StatefulWidget {
 }
 
 class _KuGouAppState extends State<KuGouApp> {
-
   KuGouBloc _bloc;
 
   @override
