@@ -25,6 +25,13 @@ class KuGouBloc extends BlocBase {
   List<SongInfoBean> _plays = [];
   int _playIndex = -1;
 
+  KuGouBloc() {
+    _audioPlugin.onPlayerStateChanged.listen((state) {
+      if (state == AudioPlayerState.COMPLETED && _plays.length > 0)
+        playNext();
+    });
+  }
+
   void addAndPlay(SongInfoBean bean) {
     if (_plays.contains(bean))
       _playIndex = _plays.indexOf(bean);
