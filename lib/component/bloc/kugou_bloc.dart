@@ -20,6 +20,9 @@ class KuGouBloc extends BlocBase {
   // 获取现在播放的音乐学校
   SongInfoBean get playerInfo => ((_playIndex >= 0 && _playIndex < _plays.length) ? _plays[_playIndex] : null);
 
+  // 音乐播放暂停时，程序进入后台的时候，播放器的接口会在回调一次，这时候界面会觉得播放器有开始了，所以这里加个标识符判断一下
+  bool isStopFlag = false;
+
   List<SongInfoBean> _plays = [];
   int _playIndex = -1;
 
@@ -77,6 +80,7 @@ class KuGouBloc extends BlocBase {
       _playerController = null;
     }
     _sendStream(null);
+    isStopFlag = true;
   }
 
   void play() {
@@ -90,6 +94,7 @@ class KuGouBloc extends BlocBase {
     } else {
       _sendStream(null);
     }
+    isStopFlag = false;
   }
 
   // 1为播放 0为暂停
@@ -104,6 +109,7 @@ class KuGouBloc extends BlocBase {
     } else {
       _sendStream(null);
     }
+    isStopFlag = true;
   }
 
   void _playNewSong() {
@@ -115,6 +121,9 @@ class KuGouBloc extends BlocBase {
     VideoPlayerController.network(playerInfo.data.play_url)
       ..initialize();
     _playerController.addListener(() {
+      if (isStopFlag) {
+        return;
+      }
       _sendStream(PlaySongInfoBean(
         songInfo: playerInfo,
         duration: _playerController.value.duration,
@@ -122,6 +131,7 @@ class KuGouBloc extends BlocBase {
       ));
     });
     _playerController.play();
+    isStopFlag = false;
   }
 
   void _sendStream(PlaySongInfoBean bean) {
