@@ -29,6 +29,13 @@ class KuGouBloc extends BlocBase {
     _play();
   }
 
+  void playNext() {
+    ++_play_index;
+    if (_play_index >= _plays.length)
+      _play_index = 0;
+    _play();
+  }
+
   void play() {
     if (_playerController != null) {
       _playerController.play();

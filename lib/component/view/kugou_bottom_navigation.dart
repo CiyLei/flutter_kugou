@@ -108,7 +108,9 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation> {
                             ),
                             IconButton(
                               icon: Icon(Icons.skip_next),
-                              onPressed: () {},
+                              onPressed: () {
+                                BlocProvider.of<KuGouBloc>(context).playNext();
+                              },
                             ),
                             IconButton(
                               icon: Icon(Icons.playlist_play),
