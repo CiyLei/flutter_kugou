@@ -2,12 +2,11 @@ import 'package:flutter_kugou/bean/play_song_info_bean.dart';
 import 'package:flutter_kugou/bean/play_song_list_info_bean.dart';
 import 'package:flutter_kugou/bean/song_info_bean.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
-import 'package:video_player/video_player.dart';
+import 'package:audioplayer/audioplayer.dart';
 import 'dart:async';
 import 'dart:math';
 
 class KuGouBloc extends BlocBase {
-  VideoPlayerController _playerController;
 
   // 播放音乐的Stream
   StreamController<PlaySongInfoBean> _playerStreamController =
@@ -20,8 +19,8 @@ class KuGouBloc extends BlocBase {
   // 获取现在播放的音乐学校
   SongInfoBean get playerInfo => ((_playIndex >= 0 && _playIndex < _plays.length) ? _plays[_playIndex] : null);
 
-  // 音乐播放暂停时，程序进入后台的时候，播放器的接口会在回调一次，这时候界面会觉得播放器有开始了，所以这里加个标识符判断一下
-  bool isStopFlag = false;
+  AudioPlayer _audioPlugin = new AudioPlayer();
+  Duration _currentDuration = Duration.zero;
 
   List<SongInfoBean> _plays = [];
   int _playIndex = -1;
@@ -37,7 +36,6 @@ class KuGouBloc extends BlocBase {
   void add(SongInfoBean bean) {
     if (_plays.contains(bean)) _plays.remove(bean);
     _plays.insert((_playIndex + 1), bean);
-//    _playNewSong();
   }
 
   void playNext() {
@@ -75,63 +73,49 @@ class KuGouBloc extends BlocBase {
   void clearPlayerList() {
     _playIndex = -1;
     _plays.clear();
-    if (_playerController != null) {
-      _playerController.dispose();
-      _playerController = null;
-    }
+    _currentDuration = Duration.zero;
+    _audioPlugin.stop();
     _sendStream(null);
-    isStopFlag = true;
   }
 
   void play() {
-    if (_playerController != null) {
-      _playerController.play();
+    if (_playIndex >= 0 && _playIndex < _plays.length) {
+      _audioPlugin.play(playerInfo.data.play_url);
       _sendStream(PlaySongInfoBean(
           songInfo: playerInfo,
-          duration: _playerController.value.duration,
-          position: _playerController.value.position,
+          duration: _audioPlugin.duration,
+          position: _currentDuration,
           state: 1));
     } else {
       _sendStream(null);
     }
-    isStopFlag = false;
   }
 
   // 1为播放 0为暂停
   void pause() {
-    if (_playerController != null) {
-      _playerController.pause();
+    if (_playIndex >= 0 && _playIndex < _plays.length) {
+      _audioPlugin.pause();
       _sendStream(PlaySongInfoBean(
           songInfo: playerInfo,
-          duration: _playerController.value.duration,
-          position: _playerController.value.position,
+          duration: _audioPlugin.duration,
+          position: _currentDuration,
           state: 0));
     } else {
       _sendStream(null);
     }
-    isStopFlag = true;
   }
 
   void _playNewSong() {
-    if (_playerController != null) {
-      _playerController.dispose();
-      _playerController = null;
-    }
-    _playerController =
-    VideoPlayerController.network(playerInfo.data.play_url)
-      ..initialize();
-    _playerController.addListener(() {
-      if (isStopFlag) {
-        return;
-      }
+    _audioPlugin.stop();
+    _audioPlugin.onAudioPositionChanged.listen((duration) {
+      _currentDuration = duration;
       _sendStream(PlaySongInfoBean(
         songInfo: playerInfo,
-        duration: _playerController.value.duration,
-        position: _playerController.value.position,
+        duration: _audioPlugin.duration,
+        position: duration,
       ));
     });
-    _playerController.play();
-    isStopFlag = false;
+    _audioPlugin.play(playerInfo.data.play_url);
   }
 
   void _sendStream(PlaySongInfoBean bean) {
