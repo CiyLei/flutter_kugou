@@ -7,7 +7,7 @@ class SongSearchListBloc extends BlocBase{
 
   String song;
   int _page = 1;
-  bool isMore = true;
+  bool isMore = false;
 
   StreamController<List<SearchSongsInfoData>> _searchSongController = StreamController();
   Stream<List<SearchSongsInfoData>> get searchSong => _searchSongController.stream;
@@ -18,11 +18,11 @@ class SongSearchListBloc extends BlocBase{
   }
 
   void refresh() {
-    _page = 1;
-    _data.clear();
-    isMore = true;
     RequestWareHouse.instance().getSearchSong(song).then((SearchSongsBean bean) {
+      _page = 1;
       isMore = bean.data.info.length > 0;
+      _data.clear();
+      _data.addAll(bean.data.info);
       _searchSongController.add(bean.data.info);
     });
   }

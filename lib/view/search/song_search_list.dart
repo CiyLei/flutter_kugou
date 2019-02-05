@@ -27,19 +27,40 @@ class _SongSearchListState
                 AsyncSnapshot<List<SearchSongsInfoData>> snapshot) {
               return ListView.separated(
                 itemBuilder: (BuildContext context, int index) {
-                  return Material(
-                    child: InkWell(
-                      onTap: () {},
-                      child: _buildItem(index, snapshot.data[index],
-                          onAddTap: () {}, onMoreTap: () {}),
-                    ),
-                  );
+                  if (index >= snapshot.data.length)
+                    bloc.getNext();
+                  return index < snapshot.data.length
+                      ? Material(
+                          child: InkWell(
+                            onTap: () {
+                            },
+                            child: _buildItem(index, snapshot.data[index],
+                                onAddTap: () {}, onMoreTap: () {}),
+                          ),
+                        )
+                      : Padding(
+                          padding:
+                              const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              CircularProgressIndicator(),
+                              SizedBox(
+                                width: 10.0,
+                              ),
+                              Text(
+                                "加载中，请稍等",
+                                style: TextStyle(color: Colors.grey),
+                              )
+                            ],
+                          ),
+                        );
                 },
                 separatorBuilder: (BuildContext context, int index) => Divider(
                       height: 1.0,
                       indent: 65.0,
                     ),
-                itemCount: snapshot.data.length,
+                itemCount: snapshot.data.length + (bloc.isMore ? 1 : 0),
               );
             },
           ),
