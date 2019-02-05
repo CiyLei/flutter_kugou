@@ -1,6 +1,9 @@
+import 'package:flutter/widgets.dart';
+import 'package:flutter_kugou/bean/song_info_bean.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
+import 'package:flutter_kugou/component/bloc/kugou_bloc.dart';
 import 'package:flutter_kugou/component/net/request_warehouse.dart';
-import 'package:flutter_kugou/view/search/search_songs_bean.dart';
+import 'package:flutter_kugou/view/search/bean/search_songs_bean.dart';
 import 'dart:async';
 
 class SongSearchListBloc extends BlocBase{
@@ -32,6 +35,18 @@ class SongSearchListBloc extends BlocBase{
       isMore = bean.data.info.length > 0;
       _data.addAll(bean.data.info);
       _searchSongController.add(_data);
+    });
+  }
+
+  void playSong(String hash, BuildContext context) {
+    RequestWareHouse.instance().getSongInfo(hash).then((SongInfoBean bean) {
+      BlocProvider.of<KuGouBloc>(context).addAndPlay(bean);
+    });
+  }
+
+  void addSong(String hash, BuildContext context) {
+    RequestWareHouse.instance().getSongInfo(hash).then((SongInfoBean bean) {
+      BlocProvider.of<KuGouBloc>(context).add(bean);
     });
   }
 

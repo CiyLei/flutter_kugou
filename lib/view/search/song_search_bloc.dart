@@ -2,7 +2,7 @@ import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'dart:async';
 
 import 'package:flutter_kugou/component/net/request_warehouse.dart';
-import 'package:flutter_kugou/view/search/song_search_bean.dart';
+import 'package:flutter_kugou/view/search/bean/song_search_bean.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SongSearchBloc extends BlocBase {

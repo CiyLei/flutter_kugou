@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kugou/component/base_state.dart';
-import 'package:flutter_kugou/view/search/search_songs_bean.dart';
+import 'package:flutter_kugou/view/search/bean/search_songs_bean.dart';
 import 'package:flutter_kugou/view/search/song_search_list_bloc.dart';
 
 class SongSearchList extends StatefulWidget {
@@ -27,15 +27,17 @@ class _SongSearchListState
                 AsyncSnapshot<List<SearchSongsInfoData>> snapshot) {
               return ListView.separated(
                 itemBuilder: (BuildContext context, int index) {
-                  if (index >= snapshot.data.length)
-                    bloc.getNext();
+                  if (index >= snapshot.data.length) bloc.getNext();
                   return index < snapshot.data.length
                       ? Material(
                           child: InkWell(
                             onTap: () {
+                              bloc.playSong(snapshot.data[index].hash, context);
                             },
                             child: _buildItem(index, snapshot.data[index],
-                                onAddTap: () {}, onMoreTap: () {}),
+                                onAddTap: () {
+                              bloc.addSong(snapshot.data[index].hash, context);
+                            }, onMoreTap: () {}),
                           ),
                         )
                       : Padding(
@@ -98,26 +100,25 @@ class _SongSearchListState
                   text: TextSpan(
                     text: data.songname.startsWith(bloc.song) ? bloc.song : "",
                     style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontSize: 16.0),
+                        color: Theme.of(context).primaryColor, fontSize: 16.0),
                     children: data.songname.split(bloc.song).map((val) {
                       return val.isEmpty
                           ? TextSpan()
                           : TextSpan(
-                          text: val,
-                          style: TextStyle(
-                              color: Colors.black, fontSize: 16.0),
-                          children: [
-                            TextSpan(
-                              text: !data.songname.endsWith(val) ||
-                                  data.songname.endsWith(bloc.song)
-                                  ? bloc.song
-                                  : "",
+                              text: val,
                               style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 16.0),
-                            )
-                          ]);
+                                  color: Colors.black, fontSize: 16.0),
+                              children: [
+                                  TextSpan(
+                                    text: !data.songname.endsWith(val) ||
+                                            data.songname.endsWith(bloc.song)
+                                        ? bloc.song
+                                        : "",
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                        fontSize: 16.0),
+                                  )
+                                ]);
                     }).toList(),
                   ),
                 ),

@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_kugou/component/base_state.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:flutter_kugou/component/navigator/kugou_navigator.dart';
-import 'package:flutter_kugou/view/search/song_search_bean.dart';
+import 'package:flutter_kugou/view/search/bean/song_search_bean.dart';
 import 'package:flutter_kugou/view/search/song_search_bloc.dart';
 import 'package:flutter_kugou/view/search/song_search_history.dart';
 import 'package:flutter_kugou/view/search/song_name_search_list.dart';
@@ -50,7 +50,7 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
         automaticallyImplyLeading: false,
         title: Row(
           children: <Widget>[
-            _buildSearch("SING女团 团团圆圆"),
+            _buildSearch("光年之外"),
             Expanded(
               child: SizedBox(),
             ),

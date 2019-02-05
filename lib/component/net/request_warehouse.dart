@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter_kugou/bean/song_info_bean.dart';
 import 'package:flutter_kugou/component/net/net_util.dart';
-import 'package:flutter_kugou/view/search/search_songs_bean.dart';
-import 'package:flutter_kugou/view/search/song_search_bean.dart';
+import 'package:flutter_kugou/view/search/bean/search_songs_bean.dart';
+import 'package:flutter_kugou/view/search/bean/song_search_bean.dart';
 
 class RequestWareHouse {
   // 表示只有内部才可以创建这个类
@@ -39,5 +40,15 @@ class RequestWareHouse {
       },
     );
     return SearchSongsBean.fromJson(json.decode(response));
+  }
+
+  Future<SongInfoBean> getSongInfo(String hash) async{
+    String response = await NetUtil.GET(
+      url: "http://www.kugou.com/yy/index.php?r=play/getdata",
+      params: {
+        "hash": hash,
+      },
+    );
+    return SongInfoBean.fromJson(json.decode(response));
   }
 }
