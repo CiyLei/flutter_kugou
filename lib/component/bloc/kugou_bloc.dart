@@ -4,6 +4,7 @@ import 'package:flutter_kugou/bean/song_info_bean.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:async';
+import 'dart:math';
 
 class KuGouBloc extends BlocBase {
   VideoPlayerController _playerController;
@@ -13,6 +14,8 @@ class KuGouBloc extends BlocBase {
   Stream<PlaySongInfoBean> get playStream => _playerStreamController.stream;
 
   PlaySongListInfoBean get playListInfo => PlaySongListInfoBean(plays: _plays, index: _playIndex);
+  
+  SongInfoBean get playerInfo => ((_playIndex >= 0 && _playIndex < _plays.length) ? _plays[_playIndex] : null);
 
   List<SongInfoBean> _plays = [];
   int _playIndex = -1;
@@ -39,11 +42,45 @@ class KuGouBloc extends BlocBase {
     }
   }
 
+  void playOfIndex(int index) {
+    if (index != _playIndex) {
+      _playIndex = min(index, _plays.length - 1);
+      _playNewSong();
+    }
+  }
+
+  void deletePlayer(int index) {
+    if (_plays.length <= 1) {
+      clearPlayerList();
+    } else {
+      if (index == _playIndex) {
+        _plays.removeAt(index);
+        --_playIndex;
+        playNext();
+      } else {
+        _plays.removeAt(index);
+        if (index < _playIndex) {
+          --_playIndex;
+        }
+      }
+    }
+  }
+
+  void clearPlayerList() {
+    _playIndex = -1;
+    _plays.clear();
+    if (_playerController != null) {
+      _playerController.dispose();
+      _playerController = null;
+    }
+    _sendStream(null);
+  }
+
   void play() {
     if (_playerController != null) {
       _playerController.play();
       _sendStream(PlaySongInfoBean(
-          songInfo: _plays[_playIndex],
+          songInfo: playerInfo,
           duration: _playerController.value.duration,
           position: _playerController.value.position,
           state: 1));
@@ -52,11 +89,12 @@ class KuGouBloc extends BlocBase {
     }
   }
 
+  // 1为播放 0为暂停
   void pause() {
     if (_playerController != null) {
       _playerController.pause();
       _sendStream(PlaySongInfoBean(
-          songInfo: _plays[_playIndex],
+          songInfo: playerInfo,
           duration: _playerController.value.duration,
           position: _playerController.value.position,
           state: 0));
@@ -65,18 +103,17 @@ class KuGouBloc extends BlocBase {
     }
   }
 
-  // 1为播放 0为暂停
   void _playNewSong() {
     if (_playerController != null) {
-      _playerController.pause();
       _playerController.dispose();
+      _playerController = null;
     }
     _playerController =
-        VideoPlayerController.network(_plays[_playIndex].data.play_url)
-          ..initialize();
+    VideoPlayerController.network(playerInfo.data.play_url)
+      ..initialize();
     _playerController.addListener(() {
       _sendStream(PlaySongInfoBean(
-        songInfo: _plays[_playIndex],
+        songInfo: playerInfo,
         duration: _playerController.value.duration,
         position: _playerController.value.position,
       ));

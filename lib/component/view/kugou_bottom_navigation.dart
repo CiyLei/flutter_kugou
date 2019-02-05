@@ -59,7 +59,7 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation> {
                           snapshot.data.songInfo != null &&
                                   snapshot.data.duration != null
                               ? snapshot.data.duration.inSeconds
-                              : 0),
+                              : 100),
                       Expanded(
                         child: Row(
                           children: <Widget>[
@@ -184,13 +184,16 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation> {
           return _buildPlayerList(context, onOrderTap: () {
             print("切换顺序");
           }, onItemDeleteTap: (index) {
-            print("删除$index");
+//            print("删除$index");
+            BlocProvider.of<KuGouBloc>(context).deletePlayer(index);
           }, onAllDeleteTap: () {
-            print("删除全部");
+//            print("删除全部");
+            BlocProvider.of<KuGouBloc>(context).clearPlayerList();
           }, onCancelTap: () {
             Navigator.pop(context);
           }, onItemTap: (index) {
-            print("点击$index");
+//            print("点击$index");
+            BlocProvider.of<KuGouBloc>(context).playOfIndex(index);
           });
         });
   }
