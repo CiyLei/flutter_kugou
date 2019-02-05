@@ -29,6 +29,8 @@ class KuGouBloc extends BlocBase {
     _audioPlugin.onPlayerStateChanged.listen((state) {
       if (state == AudioPlayerState.COMPLETED && _plays.length > 0)
         playNext();
+      else if(state == AudioPlayerState.PAUSED)
+        pause(audioPluginPause: false);
     });
   }
 
@@ -99,9 +101,10 @@ class KuGouBloc extends BlocBase {
   }
 
   // 1为播放 0为暂停
-  void pause() {
+  void pause({audioPluginPause = true}) {
     if (_playIndex >= 0 && _playIndex < _plays.length) {
-      _audioPlugin.pause();
+      if (audioPluginPause)
+        _audioPlugin.pause();
       _sendStream(PlaySongInfoBean(
           songInfo: playerInfo,
           duration: _audioPlugin.duration,
