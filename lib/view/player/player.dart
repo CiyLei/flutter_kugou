@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_kugou/bean/play_song_info_bean.dart';
 import 'package:flutter_kugou/component/base_state.dart';
+import 'package:flutter_kugou/component/utils/view.dart';
 import 'package:flutter_kugou/component/view/kugou_bottom_navigation.dart';
 import 'package:flutter_kugou/component/view/sing_images_loop.dart';
 import 'package:flutter_kugou/view/player/player_bloc.dart';
@@ -87,7 +88,7 @@ class _PlayerState extends BaseState<Player, PlayerBloc> {
               state: data.state,
               onOrderTap: () {},
               onListTap: () {
-
+                ViewUtils.showPlayerList(context, bloc.kuGouBloc);
               },
               onPlayerTap: () {
                 if (data.state == 0)

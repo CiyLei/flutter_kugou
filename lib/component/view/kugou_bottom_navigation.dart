@@ -5,6 +5,7 @@ import 'package:flutter_kugou/bean/play_song_info_bean.dart';
 import 'package:flutter_kugou/bean/play_song_list_info_bean.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:flutter_kugou/component/bloc/kugou_bloc.dart';
+import 'package:flutter_kugou/component/utils/view.dart';
 import 'package:flutter_kugou/view/player/player.dart';
 import 'dart:math';
 
@@ -154,7 +155,8 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
                             IconButton(
                               icon: Icon(Icons.playlist_play),
                               onPressed: () {
-                                showPlayerList(context);
+                                print(BlocProvider.of<KuGouBloc>(context).playStream == widget.playerStream);
+                                ViewUtils.showPlayerList(context, BlocProvider.of<KuGouBloc>(context));
                               },
                             )
                           ],
@@ -170,7 +172,8 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
     );
   }
 
-  Padding _buildAvatar(BuildContext context, AsyncSnapshot<PlaySongInfoBean> snapshot) {
+  Padding _buildAvatar(
+      BuildContext context, AsyncSnapshot<PlaySongInfoBean> snapshot) {
     return Padding(
       padding: const EdgeInsets.only(left: 10.0, bottom: 5.0),
       child: AnimatedBuilder(
@@ -211,19 +214,23 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
     final double screenHeight = MediaQuery.of(context).size.height;
     final PlayerBloc _b = PlayerBloc(BlocProvider.of<KuGouBloc>(context));
     Navigator.of(context)
-        .push(PageRouteBuilder(pageBuilder: (_, animation, _1) {
-      return AnimatedBuilder(
-          animation: animation,
-          builder: (_, _c) => Transform.rotate(
-                alignment: Alignment.bottomCenter,
-                origin: Offset(0, screenHeight / 2),
-                angle: (1.0 - animation.value) * pi / 2,
-                child: BlocProvider<PlayerBloc>(
-                  child: Player(),
-                  bloc: _b,
-                ),
-              ));
-    }, transitionDuration: const Duration(milliseconds: 500), )).then((_) {
+        .push(PageRouteBuilder(
+      pageBuilder: (_, animation, _1) {
+        return AnimatedBuilder(
+            animation: animation,
+            builder: (_, _c) => Transform.rotate(
+                  alignment: Alignment.bottomCenter,
+                  origin: Offset(0, screenHeight / 2),
+                  angle: (1.0 - animation.value) * pi / 2,
+                  child: BlocProvider<PlayerBloc>(
+                    child: Player(),
+                    bloc: _b,
+                  ),
+                ));
+      },
+      transitionDuration: const Duration(milliseconds: 500),
+    ))
+        .then((_) {
       (() async {
         await Future.delayed(const Duration(milliseconds: 200));
         _hideController.reverse();
@@ -259,172 +266,4 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
     );
   }
 
-  void showPlayerList(BuildContext context) {
-    showCupertinoModalPopup(
-        context: context,
-        builder: (_) {
-          return _buildPlayerList(context, onOrderTap: () {
-            print("切换顺序");
-          }, onItemDeleteTap: (index) {
-            BlocProvider.of<KuGouBloc>(context).deletePlayer(index);
-          }, onAllDeleteTap: () {
-            BlocProvider.of<KuGouBloc>(context).clearPlayerList();
-          }, onCancelTap: () {
-            Navigator.pop(context);
-          }, onItemTap: (index) {
-            BlocProvider.of<KuGouBloc>(context).playOfIndex(index);
-          });
-        });
-  }
-
-  Widget _buildPlayerList(
-    BuildContext context, {
-    VoidCallback onOrderTap,
-    ValueChanged onItemTap,
-    ValueChanged onItemDeleteTap,
-    VoidCallback onAllDeleteTap,
-    VoidCallback onCancelTap,
-  }) {
-    return StreamBuilder(
-        initialData: PlaySongInfoBean(),
-        stream: widget.playerStream,
-        builder: (_, AsyncSnapshot<PlaySongInfoBean> snapshot) => Container(
-              height: MediaQuery.of(context).size.height * 0.7,
-              color: Colors.white,
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      //compare_arrows
-                      FlatButton.icon(
-                          onPressed: onOrderTap,
-                          icon: Icon(
-                            Icons.arrow_forward,
-                            color: Colors.black,
-                          ),
-                          label: DefaultTextStyle(
-                              style: TextStyle(color: Colors.black),
-                              child: Text(
-                                  "顺序播放(${BlocProvider.of<KuGouBloc>(context).playListInfo.plays.length})"))),
-                      Expanded(
-                        child: SizedBox(),
-                      ),
-                      Material(
-                        child: IconButton(
-                            icon: Icon(
-                              Icons.delete,
-                              color: Colors.grey,
-                            ),
-                            onPressed: onAllDeleteTap),
-                        color: Colors.transparent,
-                      ),
-                    ],
-                  ),
-                  Divider(
-                    height: 1.0,
-                  ),
-                  Expanded(
-                    child: ListView.separated(
-                      padding: EdgeInsets.zero,
-                      itemCount: BlocProvider.of<KuGouBloc>(context)
-                          .playListInfo
-                          .plays
-                          .length,
-                      separatorBuilder: (_, _i) => Divider(
-                            height: 1.0,
-                            indent: 50.0,
-                          ),
-                      itemBuilder: (_, index) => _buildPlayerListItem(
-                          index,
-                          BlocProvider.of<KuGouBloc>(context).playListInfo,
-                          onItemTap,
-                          onItemDeleteTap),
-                    ),
-                  ),
-                  Divider(
-                    height: 1.0,
-                  ),
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: onCancelTap,
-                    child: Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
-                      child: DefaultTextStyle(
-                          style: TextStyle(color: Colors.black),
-                          child: Text(
-                            "关闭",
-                          )),
-                    ),
-                  )
-                ],
-              ),
-            ));
-  }
-
-  Widget _buildPlayerListItem(
-    int index,
-    PlaySongListInfoBean bean,
-    ValueChanged onItemTap,
-    ValueChanged onItemDeleteTap,
-  ) {
-    return Material(
-      color: Colors.white,
-      child: InkWell(
-        onTap: () {
-          onItemTap(index);
-        },
-        child: Row(
-          children: <Widget>[
-            Container(
-              width: 50.0,
-              height: 50.0,
-              alignment: Alignment.center,
-              child: bean.index == index
-                  ? CircleAvatar(
-                      radius: 20.0,
-                      backgroundImage: NetworkImage(bean.plays[index].data.img),
-                    )
-                  : DefaultTextStyle(
-                      style: TextStyle(color: Colors.black, fontSize: 12.0),
-                      child: Text("${index < 9 ? "0" : ""}${index + 1}"),
-                    ),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  DefaultTextStyle(
-                    style: TextStyle(
-                        color: index == bean.index
-                            ? Theme.of(context).primaryColor
-                            : Colors.black,
-                        fontSize: 14.0),
-                    child: Text(bean.plays[index].data.song_name),
-                  ),
-                  DefaultTextStyle(
-                    style: TextStyle(
-                        color: index == bean.index
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey,
-                        fontSize: 12.0),
-                    child: Text(bean.plays[index].data.author_name),
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.delete,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                onItemDeleteTap(index);
-              },
-            )
-          ],
-        ),
-      ),
-    );
-  }
 }
