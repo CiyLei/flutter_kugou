@@ -165,13 +165,13 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
                   ),
                 ),
               ),
-              _buildAvatar(snapshot),
+              _buildAvatar(context, snapshot),
             ],
           ),
     );
   }
 
-  Padding _buildAvatar(AsyncSnapshot<PlaySongInfoBean> snapshot) {
+  Padding _buildAvatar(BuildContext context, AsyncSnapshot<PlaySongInfoBean> snapshot) {
     return Padding(
       padding: const EdgeInsets.only(left: 10.0, bottom: 5.0),
       child: AnimatedBuilder(
@@ -180,7 +180,7 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
                 angle: _avatarController.value,
                 child: GestureDetector(
                   onTap: () {
-                    _openPlayer();
+                    _openPlayer(context);
                   },
                   child: Material(
                     elevation: 3.0,
@@ -206,25 +206,26 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
     );
   }
 
-  void _openPlayer() async {
+  void _openPlayer(BuildContext context) async {
     _hideController.forward();
-    await Future.delayed(const Duration(milliseconds: 300));
-    Navigator.of(context, rootNavigator: true)
+    await Future.delayed(const Duration(milliseconds: 200));
+    final double screenHeight = MediaQuery.of(context).size.height;
+    Navigator.of(context)
         .push(PageRouteBuilder(pageBuilder: (_, animation, _1) {
       return AnimatedBuilder(
           animation: animation,
           builder: (_, _c) => Transform.rotate(
                 alignment: Alignment.bottomCenter,
-                origin: Offset(0, MediaQuery.of(context).size.height / 2),
+                origin: Offset(0, screenHeight / 2),
                 angle: (1.0 - animation.value) * pi / 2,
                 child: BlocProvider<PlayerBloc>(
                   child: Player(),
-                  bloc: PlayerBloc(),
+                  bloc: PlayerBloc(BlocProvider.of<KuGouBloc>(context)),
                 ),
               ));
-    })).then((_) {
+    }, transitionDuration: const Duration(milliseconds: 500), )).then((_) {
       (() async {
-        await Future.delayed(const Duration(milliseconds: 300));
+        await Future.delayed(const Duration(milliseconds: 200));
         _hideController.reverse();
       })();
     });

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Player extends StatefulWidget {
@@ -8,6 +9,9 @@ class Player extends StatefulWidget {
 class _PlayerState extends State<Player> {
   @override
   Widget build(BuildContext context) {
-    return Container(color: Colors.orangeAccent,);
+    return Scaffold(
+      appBar: CupertinoNavigationBar(),
+      backgroundColor: Colors.orangeAccent,
+    );
   }
 }
