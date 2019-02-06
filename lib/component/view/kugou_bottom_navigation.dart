@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:flutter_kugou/bean/play_song_info_bean.dart';
 import 'package:flutter_kugou/bean/play_song_list_info_bean.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:flutter_kugou/component/bloc/kugou_bloc.dart';
+import 'package:flutter_kugou/view/player/player.dart';
 import 'dart:math';
+
+import 'package:flutter_kugou/view/player/player_bloc.dart';
 
 class KuGouBottomNavigation extends StatefulWidget {
   KuGouBottomNavigation({
@@ -22,11 +26,12 @@ class KuGouBottomNavigation extends StatefulWidget {
 }
 
 class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   // 1为播放 0为暂停
   int currentPlayerState = 0;
   AnimationController _avatarController;
   double progress;
+  AnimationController _hideController;
 
   @override
   void initState() {
@@ -47,10 +52,23 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
         _avatarController.forward();
       currentPlayerState = bean.state;
     });
+    _hideController = AnimationController(
+        vsync: this,
+        upperBound: 65.0,
+        duration: const Duration(milliseconds: 300));
   }
 
   @override
   Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: _hideController,
+        builder: (_, _c) => Transform.translate(
+              offset: Offset(0, _hideController.value),
+              child: _buildContent(context),
+            ));
+  }
+
+  StreamBuilder<PlaySongInfoBean> _buildContent(BuildContext context) {
     return StreamBuilder(
       initialData: PlaySongInfoBean(state: 0),
       stream: widget.playerStream,
@@ -147,36 +165,69 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0, bottom: 5.0),
-                child: AnimatedBuilder(
-                    animation: _avatarController,
-                    builder: (_, _c) => Transform.rotate(
-                          angle: _avatarController.value,
-                          child: Material(
-                            elevation: 3.0,
-                            borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                            child: CircleAvatar(
-                              radius: 32.0,
-                              backgroundColor: Colors.grey[300],
-                              child: snapshot.data.songInfo == null
-                                  ? CircleAvatar(
-                                radius: 30.0,
-                                backgroundColor: Colors.grey,
-                              )
-                                  : CircleAvatar(
-                                radius: 30.0,
-                                backgroundColor: Colors.grey,
-                                backgroundImage: NetworkImage(
-                                    snapshot.data.songInfo.data.img),
-                              ),
-                            ),
-                          ),
-                        )),
-              ),
+              _buildAvatar(snapshot),
             ],
           ),
     );
+  }
+
+  Padding _buildAvatar(AsyncSnapshot<PlaySongInfoBean> snapshot) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10.0, bottom: 5.0),
+      child: AnimatedBuilder(
+          animation: _avatarController,
+          builder: (_, _c) => Transform.rotate(
+                angle: _avatarController.value,
+                child: GestureDetector(
+                  onTap: () {
+                    _openPlayer();
+                  },
+                  child: Material(
+                    elevation: 3.0,
+                    borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                    child: CircleAvatar(
+                      radius: 32.0,
+                      backgroundColor: Colors.grey[300],
+                      child: snapshot.data.songInfo == null
+                          ? CircleAvatar(
+                              radius: 30.0,
+                              backgroundColor: Colors.grey,
+                            )
+                          : CircleAvatar(
+                              radius: 30.0,
+                              backgroundColor: Colors.grey,
+                              backgroundImage:
+                                  NetworkImage(snapshot.data.songInfo.data.img),
+                            ),
+                    ),
+                  ),
+                ),
+              )),
+    );
+  }
+
+  void _openPlayer() async {
+    _hideController.forward();
+    await Future.delayed(const Duration(milliseconds: 300));
+    Navigator.of(context, rootNavigator: true)
+        .push(PageRouteBuilder(pageBuilder: (_, animation, _1) {
+      return AnimatedBuilder(
+          animation: animation,
+          builder: (_, _c) => Transform.rotate(
+                alignment: Alignment.bottomCenter,
+                origin: Offset(0, MediaQuery.of(context).size.height / 2),
+                angle: (1.0 - animation.value) * pi / 2,
+                child: BlocProvider<PlayerBloc>(
+                  child: Player(),
+                  bloc: PlayerBloc(),
+                ),
+              ));
+    })).then((_) {
+      (() async {
+        await Future.delayed(const Duration(milliseconds: 300));
+        _hideController.reverse();
+      })();
+    });
   }
 
   Widget _buildProgress(BuildContext context, int position, int duration) {

@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:flutter_kugou/bean/song_info_bean.dart';
+import 'package:flutter_kugou/view/player/song_info_bean.dart';
 
 class PlaySongInfoBean {
   SongInfoBean songInfo;

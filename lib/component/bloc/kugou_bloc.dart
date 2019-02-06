@@ -1,6 +1,6 @@
 import 'package:flutter_kugou/bean/play_song_info_bean.dart';
 import 'package:flutter_kugou/bean/play_song_list_info_bean.dart';
-import 'package:flutter_kugou/bean/song_info_bean.dart';
+import 'package:flutter_kugou/view/player/song_info_bean.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:audioplayer/audioplayer.dart';
 import 'dart:async';

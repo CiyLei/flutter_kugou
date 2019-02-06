@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter_kugou/bean/song_info_bean.dart';
+import 'package:flutter_kugou/view/player/song_info_bean.dart';
 import 'package:flutter_kugou/component/net/net_util.dart';
 import 'package:flutter_kugou/view/search/bean/search_songs_bean.dart';
 import 'package:flutter_kugou/view/search/bean/song_search_bean.dart';
