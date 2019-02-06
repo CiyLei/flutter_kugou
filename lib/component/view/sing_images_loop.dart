@@ -26,7 +26,7 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
         vsync: this, duration: const Duration(milliseconds: 300));
     _hideController.addStatusListener((state) {
       if (state == AnimationStatus.completed) {
-        if (widget.controller.isLoop){
+        if (widget.controller.isLoop) {
           setState(() {
             _songImageIndex = _getNextIndex();
             _hideController.reset();
@@ -41,10 +41,26 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
     _start();
   }
 
+  @override
+  void didUpdateWidget(SingImagesLoopView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.singImages.isEmpty && widget.singImages.isNotEmpty) {
+      _start();
+    }
+  }
+
   void _start() async {
-    await Future.delayed(widget.loopTime);
-    if (widget.controller.isLoop && _hideController != null)
-      _hideController.forward();
+    if (widget.controller.isLoop &&
+        _hideController != null &&
+        widget.singImages.length > 0) await Future.delayed(widget.loopTime);
+    if (widget.controller.isLoop &&
+        _hideController != null &&
+        widget.singImages.length > 0) _hideController.forward();
+  }
+
+  int _getIndex() {
+    if (_songImageIndex < widget.singImages.length) return _songImageIndex;
+    return 0;
   }
 
   int _getNextIndex() {
@@ -61,8 +77,13 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
           )
         : Stack(
             children: <Widget>[
+              Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration:
+                      BoxDecoration(color: Theme.of(context).primaryColor)),
               Image.network(
-                widget.singImages[_songImageIndex],
+                widget.singImages[_getIndex()],
                 fit: BoxFit.cover,
                 height: double.infinity,
                 width: double.infinity,
@@ -91,18 +112,17 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
 }
 
 class SingImagesLoopController {
-
   // 1播放， 0暂停
   bool isLoop;
   VoidCallback _onStartListener;
+
   set listener(VoidCallback val) => _onStartListener = val;
 
   SingImagesLoopController({this.isLoop = true});
 
   void loop() {
     isLoop = true;
-    if (_onStartListener != null)
-      _onStartListener();
+    if (_onStartListener != null) _onStartListener();
   }
 
   void pause() {
