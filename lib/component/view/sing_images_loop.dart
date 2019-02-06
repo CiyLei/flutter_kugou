@@ -6,7 +6,7 @@ class SingImagesLoopView extends StatefulWidget {
   SingImagesLoopController controller;
 
   SingImagesLoopView(this.singImages,
-      {this.loopTime = const Duration(seconds: 5), this.controller}) {
+      {this.loopTime = const Duration(seconds: 15), this.controller}) {
     if (singImages == null) singImages = [];
   }
 
@@ -75,31 +75,34 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
         ? Container(
             color: Theme.of(context).primaryColor,
           )
-        : Stack(
-            children: <Widget>[
-              Container(
-                  width: double.infinity,
+        : Container(
+            foregroundDecoration: BoxDecoration(color: Colors.black38),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    decoration:
+                        BoxDecoration(color: Theme.of(context).primaryColor)),
+                Image.network(
+                  widget.singImages[_getIndex()],
+                  fit: BoxFit.cover,
                   height: double.infinity,
-                  decoration:
-                      BoxDecoration(color: Theme.of(context).primaryColor)),
-              Image.network(
-                widget.singImages[_getIndex()],
-                fit: BoxFit.cover,
-                height: double.infinity,
-                width: double.infinity,
-              ),
-              AnimatedBuilder(
-                  animation: _hideController,
-                  builder: (_c, _c2) => Opacity(
-                        opacity: _hideController.value,
-                        child: Image.network(
-                          widget.singImages[_getNextIndex()],
-                          fit: BoxFit.cover,
-                          height: double.infinity,
-                          width: double.infinity,
-                        ),
-                      ))
-            ],
+                  width: double.infinity,
+                ),
+                AnimatedBuilder(
+                    animation: _hideController,
+                    builder: (_c, _c2) => Opacity(
+                          opacity: _hideController.value,
+                          child: Image.network(
+                            widget.singImages[_getNextIndex()],
+                            fit: BoxFit.cover,
+                            height: double.infinity,
+                            width: double.infinity,
+                          ),
+                        ))
+              ],
+            ),
           );
   }
 

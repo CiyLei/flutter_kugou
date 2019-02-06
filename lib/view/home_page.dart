@@ -77,9 +77,10 @@ class _HomePageState extends BaseState<HomePage, HomePageBloc>
               children: [Me(), Listen(), Look(), Sing()],
             ),
             _buildSearch(context, "搜索", onTap: () {
+              final SongSearchBloc _b = SongSearchBloc();
               KuGouNavigator.of(context).push(BlocProvider<SongSearchBloc>(
                 child: SongSearch(),
-                bloc: SongSearchBloc(),
+                bloc: _b,
               ));
             }),
           ],

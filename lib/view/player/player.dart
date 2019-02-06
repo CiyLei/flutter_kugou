@@ -4,6 +4,7 @@ import 'package:flutter_kugou/bean/play_song_info_bean.dart';
 import 'package:flutter_kugou/component/base_state.dart';
 import 'package:flutter_kugou/component/view/sing_images_loop.dart';
 import 'package:flutter_kugou/view/player/player_bloc.dart';
+import 'package:flutter_kugou/view/player/singer_images_bean.dart';
 
 class Player extends StatefulWidget {
   @override
@@ -23,13 +24,14 @@ class _PlayerState extends BaseState<Player, PlayerBloc> {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        SingImagesLoopView(
-          [
-            "http://imge.kugou.com/v2/mobile_portrait/T1V8D5BCbb1RCvBVdK.jpg",
-            "http://imge.kugou.com/v2/mobile_portrait/T1opC5BbLj1RCvBVdK.jpg",
-            "http://imge.kugou.com/v2/mobile_portrait/T1_8K5ByWj1RCvBVdK.jpg",
-          ],
-          controller: _loopController,
+        StreamBuilder(
+          initialData: List<String>(),
+          stream: bloc.singerStream,
+          builder: (_, AsyncSnapshot<List<String>> snapshot) {
+            return SingImagesLoopView(
+              snapshot.data,
+              controller: _loopController,);
+          },
         ),
         StreamBuilder(
           initialData: bloc.kuGouBloc.playerSongInfo,
@@ -47,15 +49,7 @@ class _PlayerState extends BaseState<Player, PlayerBloc> {
                 border: Border.all(style: BorderStyle.none),
                 actionsForegroundColor: Colors.white,
               ),
-              body: Row(
-                children: <Widget>[
-                  RaisedButton(onPressed: () {
-                    _loopController.loop();
-                  }),RaisedButton(onPressed: () {
-                    _loopController.pause();
-                  }),
-                ],
-              ),
+              body: Text("123"),
             );
           },
         ),

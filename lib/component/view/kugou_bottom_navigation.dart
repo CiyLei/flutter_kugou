@@ -210,6 +210,7 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
     _hideController.forward();
     await Future.delayed(const Duration(milliseconds: 200));
     final double screenHeight = MediaQuery.of(context).size.height;
+    final PlayerBloc _b = PlayerBloc(BlocProvider.of<KuGouBloc>(context));
     Navigator.of(context)
         .push(PageRouteBuilder(pageBuilder: (_, animation, _1) {
       return AnimatedBuilder(
@@ -220,7 +221,7 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
                 angle: (1.0 - animation.value) * pi / 2,
                 child: BlocProvider<PlayerBloc>(
                   child: Player(),
-                  bloc: PlayerBloc(BlocProvider.of<KuGouBloc>(context)),
+                  bloc: _b,
                 ),
               ));
     }, transitionDuration: const Duration(milliseconds: 500), )).then((_) {

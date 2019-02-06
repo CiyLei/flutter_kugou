@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter_kugou/view/player/singer_images_bean.dart';
 import 'package:flutter_kugou/view/player/song_info_bean.dart';
 import 'package:flutter_kugou/component/net/net_util.dart';
 import 'package:flutter_kugou/view/search/bean/search_songs_bean.dart';
@@ -50,5 +51,24 @@ class RequestWareHouse {
       },
     );
     return SongInfoBean.fromJson(json.decode(response));
+  }
+
+  Future<SingerImagesBean> getSingerImages(String hash, String songName, String singerId) async{
+    dynamic data = await NetUtil.POST(
+      url: "http://kmr.service.kugou.com/v1/author_image/audio",
+      params: {
+        "clienttime": "0",
+        "mid": "0",
+        "clientver": "0",
+        "key": "0",
+        "appid": "0",
+        "data": [{
+          "hash": hash,
+          "filename": songName,
+          "album_audio_id": singerId,
+        }],
+      },
+    );
+    return SingerImagesBean.fromJson(data);
   }
 }
