@@ -24,7 +24,7 @@ class KuGouBloc extends BlocBase {
     duration: _audioPlugin.duration,
     position: _currentDuration,
     state: _audioPlugin.state == AudioPlayerState.PLAYING ? 1 : 0
-  ) : PlaySongInfoBean();
+  ) : PlaySongInfoBean(state: 0);
 
   AudioPlayer _audioPlugin = new AudioPlayer();
   Duration _currentDuration = Duration.zero;
@@ -58,6 +58,14 @@ class KuGouBloc extends BlocBase {
     if (_plays.length > 0) {
       ++_playIndex;
       if (_playIndex >= _plays.length) _playIndex = 0;
+      _playNewSong();
+    }
+  }
+
+  void playPrevious() {
+    if (_plays.length > 0) {
+      --_playIndex;
+      if (_playIndex < 0) _playIndex = _plays.length - 1;
       _playNewSong();
     }
   }

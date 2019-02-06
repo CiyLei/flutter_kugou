@@ -19,16 +19,18 @@ class PlayerBloc extends BlocBase {
 
   PlayerBloc(this.kuGouBloc) {
     loadSingerImages();
-    kuGouBloc.playStream.listen((PlaySongInfoBean playSongInfo) {
-      // 监听是否换歌曲了
-      if (playSongInfo.songInfo != _songInfo) {
-        _songInfo = playSongInfo.songInfo;
-        if (_songInfo != null)
-          _getSingerImages();
-        else
-          _singerImagesController.add([]);
-      }
-    });
+    kuGouBloc.playStream.listen(_playSongListener);
+  }
+
+  void _playSongListener(PlaySongInfoBean playSongInfo) {
+    // 监听是否换歌曲了
+    if (playSongInfo.songInfo != _songInfo) {
+      _songInfo = playSongInfo.songInfo;
+      if (_songInfo != null)
+        _getSingerImages();
+      else
+        _sendData([]);
+    }
   }
 
   void loadSingerImages() {
@@ -42,9 +44,14 @@ class PlayerBloc extends BlocBase {
     SingerImagesBean singerImages = await RequestWareHouse.instance()
         .getSingerImages(_songInfo.data.hash, _songInfo.data.song_name,
             _songInfo.data.author_name);
-    _singerImagesController.add(singerImages.data[0][0].imgs.imgs4
+    _sendData(singerImages.data[0][0].imgs.imgs4
         .map((v) => v.sizable_portrait)
         .toList());
+  }
+
+  void _sendData(List<String> data) {
+    if (!_singerImagesController.isClosed)
+      _singerImagesController.add(data);
   }
 
   @override
