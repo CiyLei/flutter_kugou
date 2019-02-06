@@ -68,6 +68,15 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
 
   @override
   Widget build(BuildContext context) {
+    /**
+     * 据flutter的issues[13350]所提，release 因为构建的太快了
+     * 在第一帧产生前就执行到了didChangeDependencies，所以这时候我们获取屏幕大小为0，所以_scrollOffset为0.
+     * 如果这时候build的时候设置了这个为0的便宜，那么后面就不会偏移了。
+     * 如果flutter构建的太快，在第一帧生成前执行了didChangeDependencies和build，
+     * 那么在第一帧生成后会再执行一边，所以我们这里判断_scrollOffset为0就不继续下去了。
+     */
+    if (_scrollOffset == 0)
+      return Text("你太快啦");
     return Material(
       child: Listener(
         onPointerUp: (PointerUpEvent event) {
