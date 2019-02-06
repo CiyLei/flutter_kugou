@@ -6,6 +6,7 @@ import 'package:audioplayer/audioplayer.dart';
 import 'dart:async';
 import 'dart:math';
 
+// SongInfoBean只有歌曲信息  PlaySongInfoBean记录了不止歌曲信息，还有播放状态信息
 class KuGouBloc extends BlocBase {
 
   // 播放音乐的Stream
@@ -16,8 +17,14 @@ class KuGouBloc extends BlocBase {
   // 获取播放列表
   PlaySongListInfoBean get playListInfo => PlaySongListInfoBean(plays: _plays, index: _playIndex);
 
-  // 获取现在播放的音乐学校
-  SongInfoBean get playerInfo => ((_playIndex >= 0 && _playIndex < _plays.length) ? _plays[_playIndex] : null);
+  // 获取现在播放的音乐信息
+  SongInfoBean get _songInfo => ((_playIndex >= 0 && _playIndex < _plays.length) ? _plays[_playIndex] : null);
+  PlaySongInfoBean get playerSongInfo => _songInfo != null ? PlaySongInfoBean(
+    songInfo: _songInfo,
+    duration: _audioPlugin.duration,
+    position: _currentDuration,
+    state: _audioPlugin.state == AudioPlayerState.PLAYING ? 1 : 0
+  ) : PlaySongInfoBean();
 
   AudioPlayer _audioPlugin = new AudioPlayer();
   Duration _currentDuration = Duration.zero;
@@ -89,9 +96,9 @@ class KuGouBloc extends BlocBase {
 
   void play() {
     if (_playIndex >= 0 && _playIndex < _plays.length) {
-      _audioPlugin.play(playerInfo.data.play_url);
+      _audioPlugin.play(_songInfo.data.play_url);
       _sendStream(PlaySongInfoBean(
-          songInfo: playerInfo,
+          songInfo: _songInfo,
           duration: _audioPlugin.duration,
           position: _currentDuration,
           state: 1));
@@ -106,7 +113,7 @@ class KuGouBloc extends BlocBase {
       if (audioPluginPause)
         _audioPlugin.pause();
       _sendStream(PlaySongInfoBean(
-          songInfo: playerInfo,
+          songInfo: _songInfo,
           duration: _audioPlugin.duration,
           position: _currentDuration,
           state: 0));
@@ -120,12 +127,12 @@ class KuGouBloc extends BlocBase {
     _audioPlugin.onAudioPositionChanged.listen((duration) {
       _currentDuration = duration;
       _sendStream(PlaySongInfoBean(
-        songInfo: playerInfo,
+        songInfo: _songInfo,
         duration: _audioPlugin.duration,
         position: duration,
       ));
     });
-    _audioPlugin.play(playerInfo.data.play_url);
+    _audioPlugin.play(_songInfo.data.play_url);
   }
 
   void _sendStream(PlaySongInfoBean bean) {
