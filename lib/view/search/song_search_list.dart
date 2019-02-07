@@ -42,7 +42,7 @@ class _SongSearchListState
                         )
                       : Padding(
                           padding:
-                              const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                              const EdgeInsets.only(top: 10.0, bottom: 70.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -67,9 +67,6 @@ class _SongSearchListState
             },
           ),
         ),
-        SizedBox(
-          height: 60.0,
-        )
       ],
     );
   }
