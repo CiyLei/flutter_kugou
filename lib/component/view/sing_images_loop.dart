@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_kugou/component/net/network_image.dart';
 
 class SingImagesLoopView extends StatefulWidget {
   List<String> singImages;
@@ -84,8 +85,8 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
                     height: double.infinity,
                     decoration:
                         BoxDecoration(color: Theme.of(context).primaryColor)),
-                Image.network(
-                  widget.singImages[_getIndex()],
+                Image(
+                  image: MyNetworkImage(widget.singImages[_getIndex()]),
                   fit: BoxFit.cover,
                   height: double.infinity,
                   width: double.infinity,
@@ -94,8 +95,8 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
                     animation: _hideController,
                     builder: (_c, _c2) => Opacity(
                           opacity: _hideController.value,
-                          child: Image.network(
-                            widget.singImages[_getNextIndex()],
+                          child: Image(
+                            image: MyNetworkImage(widget.singImages[_getNextIndex()]),
                             fit: BoxFit.cover,
                             height: double.infinity,
                             width: double.infinity,

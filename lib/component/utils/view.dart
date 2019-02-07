@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_kugou/bean/play_song_info_bean.dart';
 import 'package:flutter_kugou/bean/play_song_list_info_bean.dart';
 import 'package:flutter_kugou/component/bloc/kugou_bloc.dart';
+import 'package:flutter_kugou/component/net/network_image.dart';
 
 class ViewUtils {
   static void showPlayerList(BuildContext context, KuGouBloc kuGouBloc) {
@@ -129,7 +130,7 @@ class ViewUtils {
               child: bean.index == index
                   ? CircleAvatar(
                       radius: 20.0,
-                      backgroundImage: NetworkImage(bean.plays[index].data.img),
+                      backgroundImage: MyNetworkImage(bean.plays[index].data.img),
                     )
                   : DefaultTextStyle(
                       style: TextStyle(color: Colors.black, fontSize: 12.0),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
+import 'package:flutter_kugou/component/net/network_image.dart';
 import 'package:flutter_kugou/model/collection_model.dart';
 import 'dart:math';
 
@@ -187,7 +188,7 @@ class _MeState extends State<Me> with AutomaticKeepAliveClientMixin{
         children: <Widget>[
           CircleAvatar(
             radius: 25.0,
-            backgroundImage: NetworkImage(
+            backgroundImage: MyNetworkImage(
                 "http://imge.kugou.com/kugouicon/165/20150210/20150210134948327295.jpg"),
           ),
           SizedBox(
@@ -466,8 +467,8 @@ class _SongListState extends State<SongList>
                     child: Row(
                       children: <Widget>[
                         Material(
-                          child: Image.network(
-                            val.imageUrl,
+                          child: Image(
+                            image: MyNetworkImage(val.imageUrl),
                             width: 50.0,
                             height: 50.0,
                           ),

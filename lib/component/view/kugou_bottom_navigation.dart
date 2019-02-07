@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_kugou/bean/play_song_info_bean.dart';
-import 'package:flutter_kugou/bean/play_song_list_info_bean.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:flutter_kugou/component/bloc/kugou_bloc.dart';
+import 'package:flutter_kugou/component/net/network_image.dart';
 import 'package:flutter_kugou/component/utils/view.dart';
 import 'package:flutter_kugou/view/player/player.dart';
 import 'dart:math';
@@ -199,7 +199,7 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
                               radius: 30.0,
                               backgroundColor: Colors.grey,
                               backgroundImage:
-                                  NetworkImage(snapshot.data.songInfo.data.img),
+                              MyNetworkImage(snapshot.data.songInfo.data.img),
                             ),
                     ),
                   ),
