@@ -1,6 +1,6 @@
 # flutter_kugou
 
-学习Flutter，模仿做个酷狗.
+学习Flutter，模仿做个酷狗（ios只支持耳机播放，不支持扬声器，等待[audioplayer](https://github.com/rxlabz/audioplayer)修复）.
 
 ![Image text](https://raw.githubusercontent.com/CiyLei/flutter_kugou/master/screen_img/1.png)
 ![Image text](https://raw.githubusercontent.com/CiyLei/flutter_kugou/master/screen_img/2.png)
