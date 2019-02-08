@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_kugou/component/net/network_image.dart';
+import 'package:flutter_kugou/component/palette_util.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 class SingImagesLoopView extends StatefulWidget {
@@ -20,10 +23,12 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
     with SingleTickerProviderStateMixin {
   int _songImageIndex = 0;
   AnimationController _hideController;
+  PaletteUtil _paletteUtil;
 
   @override
   void initState() {
     super.initState();
+    _paletteUtil = PaletteUtil();
     _hideController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 300));
     _hideController.addStatusListener((state) {
@@ -75,7 +80,8 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
   }
 
   _imagePalette(ImageProvider imageProvider) async{
-    Color paletteColor = await _getImagePaletteColor(imageProvider);
+//    Color paletteColor = await _getImagePaletteColor(imageProvider);
+    Color paletteColor = await _paletteUtil.sendImageProvider(imageProvider);
     if (widget.controller != null && widget.controller.onPaletteChange != null && paletteColor != null)
       widget.controller.onPaletteChange(paletteColor);
   }
@@ -137,6 +143,7 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
   void dispose() {
     _hideController.dispose();
     _hideController = null;
+    _paletteUtil.close();
     super.dispose();
   }
 }
