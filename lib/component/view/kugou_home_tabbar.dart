@@ -13,33 +13,52 @@ class KuGouTabBarView extends StatefulWidget {
 
 class _KuGouTabBarViewState extends State<KuGouTabBarView> {
 
-  bool tabbarOpenEnable;
+  Offset downPoint;
+  bool collectionFlag = true;
+  bool moveDraw = false;
 
   @override
   void initState() {
     super.initState();
-    tabbarOpenEnable = true;
   }
 
   @override
   Widget build(BuildContext context) {
     return Listener(
       onPointerDown: (PointerDownEvent event) {
+        collectionFlag = true;
+        downPoint = event.position;
+        moveDraw = false;
+      },
+      onPointerMove: (PointerMoveEvent event) {
+        if (collectionFlag && event.position.dx > downPoint.dx && widget.controller.index == 0) {
+          setState(() {
+            moveDraw = true;
+          });
+          collectionFlag = false;
+        }
+        if (moveDraw ) {
+          KuGouTabBarViewScrollerNotification(event.delta.dx).dispatch(context);
+        }
+      },
+      onPointerUp: (PointerUpEvent event) {
         setState(() {
-          if (event.position.dx <= 50.0 && widget.controller.index == 0) {
-            tabbarOpenEnable = false;
-          } else {
-            tabbarOpenEnable = true;
-          }
+          moveDraw = false;
         });
       },
-      child: AbsorbPointer(
-        absorbing: widget.controller.index != 0 ? false : !tabbarOpenEnable,
-        child: TabBarView(
-          controller: widget.controller,
-          children: widget.children,
-        ),
+      child: TabBarView(
+        physics: moveDraw ? NeverScrollableScrollPhysics() : null,
+        controller: widget.controller,
+        children: widget.children,
       ),
     );
   }
+}
+
+class KuGouTabBarViewScrollerNotification extends Notification {
+
+  double dx;
+
+  KuGouTabBarViewScrollerNotification(this.dx);
+
 }

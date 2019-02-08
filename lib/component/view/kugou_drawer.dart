@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_kugou/component/view/kugou_home_tabbar.dart';
 
 class KuGouScaffold extends StatefulWidget {
   KuGouScaffold({this.drawer, this.child});
@@ -86,51 +89,56 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
             openDrawer();
           }
         },
+        child: NotificationListener<KuGouTabBarViewScrollerNotification>(
+            onNotification: (notification) {
+              _controller.jumpTo(max(0, min(_controller.offset - notification.dx, _scrollOffset)));
+              return true;
+            },
         child: NotificationListener<KuGouDrawerNotification>(
-          onNotification: (notification) {
-            setState(() {
-              // 接收到是否禁止侧滑的消息
-              this.drawerEnable = notification.drawerEnable;
-            });
-          },
+            onNotification: (notification) {
+              setState(() {
+                // 接收到是否禁止侧滑的消息
+                this.drawerEnable = notification.drawerEnable;
+              });
+            },
             child: SingleChildScrollView(
-          // 禁止在ios中的弹簧效果
-          physics: drawerEnable ? ClampingScrollPhysics() : NeverScrollableScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          controller: _controller,
-          child: Row(
-            children: <Widget>[
-              Container(
-                width: _scrollOffset,
-                child: widget.drawer,
-              ),
-              Stack(
+              // 禁止在ios中的弹簧效果
+              physics: drawerEnable ? ClampingScrollPhysics() : NeverScrollableScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              controller: _controller,
+              child: Row(
                 children: <Widget>[
                   Container(
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.center,
-                    child: widget.child,
-                    foregroundDecoration: BoxDecoration(
-                        color: Color.fromRGBO(0, 0, 0, _progress * 0.5)),
+                    width: _scrollOffset,
+                    child: widget.drawer,
                   ),
-                  _isDrawer
-                      ? GestureDetector(
-                          onTap: () {
-                            closeDrawer();
-                          },
-                          child: AbsorbPointer(
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height,
-                            ),
+                  Stack(
+                    children: <Widget>[
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        alignment: Alignment.center,
+                        child: widget.child,
+                        foregroundDecoration: BoxDecoration(
+                            color: Color.fromRGBO(0, 0, 0, _progress * 0.5)),
+                      ),
+                      _isDrawer
+                          ? GestureDetector(
+                        onTap: () {
+                          closeDrawer();
+                        },
+                        child: AbsorbPointer(
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
                           ),
-                        )
-                      : SizedBox()
+                        ),
+                      )
+                          : SizedBox()
+                    ],
+                  ),
                 ],
               ),
-            ],
-          ),
-        )),
+            ))),
       ),
     );
   }
