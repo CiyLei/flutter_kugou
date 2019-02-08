@@ -54,10 +54,7 @@ class _KuGouTabBarViewState extends State<KuGouTabBarView> {
           });
         },
         child: TabBarView(
-          physics: ((){
-            print("moveDraw:$moveDraw");
-            return moveDraw;
-          })() ? NeverScrollableScrollPhysics() : null,
+          physics: moveDraw ? NeverScrollableScrollPhysics() : ScrollPhysics(),
           controller: widget.controller,
           children: widget.children,
         ),
