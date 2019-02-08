@@ -56,7 +56,7 @@ class MyNetworkImage extends ImageProvider<MyNetworkImage> {
       if (bytes != null &&
           bytes.lengthInBytes != null &&
           bytes.lengthInBytes != 0) {
-        print("success");
+//        print("success");
         return await PaintingBinding.instance.instantiateImageCodec(bytes);
       }
     }
@@ -102,7 +102,7 @@ class MyNetworkImage extends ImageProvider<MyNetworkImage> {
     String path = dir.path + "/" + name;
     var file = File(path);
     bool exist = await file.exists();
-    print("path =${path}");
+//    print("path =${path}");
     if (!exist) File(path).writeAsBytesSync(mUint8List);
   }
 

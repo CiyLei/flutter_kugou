@@ -14,11 +14,25 @@ class Player extends StatefulWidget {
 
 class _PlayerState extends BaseState<Player, PlayerBloc> {
   SingImagesLoopController _loopController;
+  Color mainColor;
 
   @override
   void initState() {
     super.initState();
     _loopController = SingImagesLoopController();
+    _loopController.onPaletteChange = (Color c) {
+      if (c.value != mainColor.value) {
+        setState(() {
+          mainColor = c;
+        });
+      }
+    };
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    mainColor = Theme.of(context).primaryColor;
   }
 
   @override
@@ -137,7 +151,7 @@ class _PlayerState extends BaseState<Player, PlayerBloc> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Material(
-                color: Theme.of(context).primaryColor,
+                color: mainColor,
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
                 clipBehavior: Clip.hardEdge,
                 child: InkWell(
@@ -156,7 +170,7 @@ class _PlayerState extends BaseState<Player, PlayerBloc> {
                 width: 20.0,
               ),
               Material(
-                color: Theme.of(context).primaryColor,
+                color: mainColor,
                 borderRadius: BorderRadius.all(Radius.circular(30.0)),
                 clipBehavior: Clip.hardEdge,
                 child: InkWell(
@@ -175,7 +189,7 @@ class _PlayerState extends BaseState<Player, PlayerBloc> {
                 width: 20.0,
               ),
               Material(
-                color: Theme.of(context).primaryColor,
+                color: mainColor,
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
                 clipBehavior: Clip.hardEdge,
                 child: InkWell(
@@ -223,10 +237,10 @@ class _PlayerState extends BaseState<Player, PlayerBloc> {
         Expanded(
           child: SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              activeTrackColor: Theme.of(context).primaryColor,
+              activeTrackColor: mainColor,
               inactiveTrackColor: Colors.grey,
               thumbColor: Colors.white,
-              activeTickMarkColor: Theme.of(context).primaryColor,
+              activeTickMarkColor: mainColor,
               inactiveTickMarkColor: Colors.grey,
             ),
             child: Slider(

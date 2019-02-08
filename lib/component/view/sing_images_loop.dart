@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kugou/component/net/network_image.dart';
+import 'package:palette_generator/palette_generator.dart';
 
 class SingImagesLoopView extends StatefulWidget {
   List<String> singImages;
@@ -60,7 +61,10 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
   }
 
   int _getIndex() {
-    if (_songImageIndex < widget.singImages.length) return _songImageIndex;
+    if (_songImageIndex < widget.singImages.length) {
+      _imagePalette(MyNetworkImage(widget.singImages[_songImageIndex]));
+      return _songImageIndex;
+    }
     return 0;
   }
 
@@ -69,6 +73,28 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
       return _songImageIndex + 1;
     return 0;
   }
+
+  _imagePalette(ImageProvider imageProvider) async{
+    Color paletteColor = await _getImagePaletteColor(imageProvider);
+    if (widget.controller != null && widget.controller.onPaletteChange != null && paletteColor != null)
+      widget.controller.onPaletteChange(paletteColor);
+  }
+
+  // 获取图片主色调
+  Future<Color> _getImagePaletteColor(ImageProvider imageProvider) async {
+    if (!_paletteCache.containsKey(imageProvider)){
+      PaletteGenerator paletteGenerator = await PaletteGenerator.fromImageProvider(imageProvider);
+      int num = 0; // 因为有可能失败，所以再给他3次机会
+      while((paletteGenerator.dominantColor == null || paletteGenerator.dominantColor.color == null) && num < 3) {
+        num++;
+        paletteGenerator = await PaletteGenerator.fromImageProvider(imageProvider);
+      }
+      _paletteCache[imageProvider] = paletteGenerator.dominantColor?.color;
+    }
+    return _paletteCache[imageProvider];
+  }
+
+  Map<ImageProvider, Color> _paletteCache = {};
 
   @override
   Widget build(BuildContext context) {
@@ -119,10 +145,11 @@ class SingImagesLoopController {
   // 1播放， 0暂停
   bool isLoop;
   VoidCallback _onStartListener;
+  ValueChanged<Color> onPaletteChange;
 
   set listener(VoidCallback val) => _onStartListener = val;
 
-  SingImagesLoopController({this.isLoop = true});
+  SingImagesLoopController({this.isLoop = true, this.onPaletteChange});
 
   void loop() {
     isLoop = true;

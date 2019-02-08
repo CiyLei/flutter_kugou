@@ -25,6 +25,7 @@ dependencies:
   http: ^0.12.0
   path_provider: ^0.4.1   #这是获取 安卓  IOS 文件缓存路径
   crypto: ^2.0.6   #这个主要是MD5  base64之类 转码   我们根据图片的md5(url)做为key来缓存
+  palette_generator: ^0.1.1   #取图片的主色调
 
 dev_dependencies:
   flutter_test:
