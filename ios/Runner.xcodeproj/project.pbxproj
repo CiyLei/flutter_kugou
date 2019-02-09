@@ -20,6 +20,13 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		CE3DEA06220EBDB0004D279A /* PaletteColorUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = CE3DE9F5220EBDB0004D279A /* PaletteColorUtils.m */; };
+		CE3DEA07220EBDB0004D279A /* Palette.m in Sources */ = {isa = PBXBuildFile; fileRef = CE3DE9F6220EBDB0004D279A /* Palette.m */; };
+		CE3DEA08220EBDB0004D279A /* PaletteSwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = CE3DE9F7220EBDB0004D279A /* PaletteSwatch.m */; };
+		CE3DEA09220EBDB0004D279A /* UIImage+Palette.m in Sources */ = {isa = PBXBuildFile; fileRef = CE3DE9F9220EBDB0004D279A /* UIImage+Palette.m */; };
+		CE3DEA0A220EBDB0004D279A /* PaletteColorModel.m in Sources */ = {isa = PBXBuildFile; fileRef = CE3DEA00220EBDB0004D279A /* PaletteColorModel.m */; };
+		CE3DEA0B220EBDB0004D279A /* PriorityBoxArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CE3DEA01220EBDB0004D279A /* PriorityBoxArray.m */; };
+		CE3DEA0C220EBDB0004D279A /* PaletteTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = CE3DEA02220EBDB0004D279A /* PaletteTarget.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -55,6 +62,21 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CE3DE9F5220EBDB0004D279A /* PaletteColorUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaletteColorUtils.m; sourceTree = "<group>"; };
+		CE3DE9F6220EBDB0004D279A /* Palette.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Palette.m; sourceTree = "<group>"; };
+		CE3DE9F7220EBDB0004D279A /* PaletteSwatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaletteSwatch.m; sourceTree = "<group>"; };
+		CE3DE9F8220EBDB0004D279A /* PriorityBoxArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriorityBoxArray.h; sourceTree = "<group>"; };
+		CE3DE9F9220EBDB0004D279A /* UIImage+Palette.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Palette.m"; sourceTree = "<group>"; };
+		CE3DE9FA220EBDB0004D279A /* PaletteTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaletteTarget.h; sourceTree = "<group>"; };
+		CE3DE9FB220EBDB0004D279A /* PaletteSwatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaletteSwatch.h; sourceTree = "<group>"; };
+		CE3DE9FC220EBDB0004D279A /* Palette.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Palette.h; sourceTree = "<group>"; };
+		CE3DE9FD220EBDB0004D279A /* PaletteColorUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaletteColorUtils.h; sourceTree = "<group>"; };
+		CE3DE9FF220EBDB0004D279A /* PaletteColorModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaletteColorModel.h; sourceTree = "<group>"; };
+		CE3DEA00220EBDB0004D279A /* PaletteColorModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaletteColorModel.m; sourceTree = "<group>"; };
+		CE3DEA01220EBDB0004D279A /* PriorityBoxArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PriorityBoxArray.m; sourceTree = "<group>"; };
+		CE3DEA02220EBDB0004D279A /* PaletteTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaletteTarget.m; sourceTree = "<group>"; };
+		CE3DEA03220EBDB0004D279A /* UIImage+Palette.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Palette.h"; sourceTree = "<group>"; };
+		CE3DEA05220EBDB0004D279A /* iOSPalette.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iOSPalette.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +143,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				CE3DE9F3220EBD32004D279A /* Palette */,
 				7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */,
 				7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
@@ -140,6 +163,44 @@
 				97C146F21CF9000F007C117D /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CE3DE9F3220EBD32004D279A /* Palette */ = {
+			isa = PBXGroup;
+			children = (
+				CE3DEA05220EBDB0004D279A /* iOSPalette.h */,
+				CE3DE9F4220EBDB0004D279A /* Source */,
+			);
+			name = Palette;
+			sourceTree = "<group>";
+		};
+		CE3DE9F4220EBDB0004D279A /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				CE3DE9F5220EBDB0004D279A /* PaletteColorUtils.m */,
+				CE3DE9F6220EBDB0004D279A /* Palette.m */,
+				CE3DE9F7220EBDB0004D279A /* PaletteSwatch.m */,
+				CE3DE9F8220EBDB0004D279A /* PriorityBoxArray.h */,
+				CE3DE9F9220EBDB0004D279A /* UIImage+Palette.m */,
+				CE3DE9FA220EBDB0004D279A /* PaletteTarget.h */,
+				CE3DE9FB220EBDB0004D279A /* PaletteSwatch.h */,
+				CE3DE9FC220EBDB0004D279A /* Palette.h */,
+				CE3DE9FD220EBDB0004D279A /* PaletteColorUtils.h */,
+				CE3DE9FE220EBDB0004D279A /* Model */,
+				CE3DEA01220EBDB0004D279A /* PriorityBoxArray.m */,
+				CE3DEA02220EBDB0004D279A /* PaletteTarget.m */,
+				CE3DEA03220EBDB0004D279A /* UIImage+Palette.h */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		CE3DE9FE220EBDB0004D279A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				CE3DE9FF220EBDB0004D279A /* PaletteColorModel.h */,
+				CE3DEA00220EBDB0004D279A /* PaletteColorModel.m */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -288,8 +349,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */,
+				CE3DEA09220EBDB0004D279A /* UIImage+Palette.m in Sources */,
+				CE3DEA07220EBDB0004D279A /* Palette.m in Sources */,
+				CE3DEA06220EBDB0004D279A /* PaletteColorUtils.m in Sources */,
+				CE3DEA0C220EBDB0004D279A /* PaletteTarget.m in Sources */,
 				97C146F31CF9000F007C117D /* main.m in Sources */,
+				CE3DEA0A220EBDB0004D279A /* PaletteColorModel.m in Sources */,
+				CE3DEA0B220EBDB0004D279A /* PriorityBoxArray.m in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				CE3DEA08220EBDB0004D279A /* PaletteSwatch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

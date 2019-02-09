@@ -81,7 +81,7 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
 
   // 用异步去取图片的主色调会让界面严重卡顿，放到另一个Ioslate中又不起作用，不知道为什么，所以放到native层去做
   void _imagePalette(String url) async{
-    if (Platform.isAndroid) { //Platform.isIOS
+    if (Platform.isAndroid || Platform.isIOS) {
       String colorStr = await _imagePalettePlatform.invokeMethod("getImagePalette", url);
       List<String> colors = colorStr.split(",");
       if (colors.length == 4) {
