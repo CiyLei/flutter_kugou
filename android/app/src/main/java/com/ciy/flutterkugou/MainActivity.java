@@ -53,6 +53,18 @@ public class MainActivity extends FlutterActivity {
                                     if (swatch == null) {
                                         swatch = palette.getMutedSwatch();
                                     }
+                                    if (swatch == null) {
+                                        swatch = palette.getLightVibrantSwatch();
+                                    }
+                                    if (swatch == null) {
+                                        swatch = palette.getLightMutedSwatch();
+                                    }
+                                    if (swatch == null) {
+                                        swatch = palette.getDarkVibrantSwatch();
+                                    }
+                                    if (swatch == null) {
+                                        swatch = palette.getDarkMutedSwatch();
+                                    }
                                     if (swatch != null) {
                                         int color = swatch.getRgb();
                                         int red = (color & 0xff0000) >> 16;

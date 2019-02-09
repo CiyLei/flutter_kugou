@@ -38,7 +38,7 @@ class SongInfoData {
   int have_mv;
   int privilege;
   int timelength;
-  String album_id;
+  dynamic album_id;
   String album_name;
   String audio_name;
   String author_id;
