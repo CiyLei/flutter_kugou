@@ -30,13 +30,11 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
   // 1为播放 0为暂停
   int currentPlayerState = 0;
   AnimationController _avatarController;
-  double progress;
   AnimationController _hideController;
 
   @override
   void initState() {
     super.initState();
-    progress = 0.0;
     _avatarController = AnimationController(
         vsync: this, upperBound: 2 * pi, duration: const Duration(seconds: 60));
     _avatarController.addStatusListener((state) {
@@ -253,9 +251,7 @@ class _KuGouBottomNavigationState extends State<KuGouBottomNavigation>
         child: Slider(
           value: position.toDouble(),
           onChanged: (value) {
-            setState(() {
-              this.progress = value.floorToDouble();
-            });
+            BlocProvider.of<KuGouBloc>(context).seek(value);
           },
           label: "${position ~/ 60}:${position % 60}",
           min: 0.0,

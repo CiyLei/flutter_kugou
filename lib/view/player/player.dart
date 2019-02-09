@@ -244,7 +244,9 @@ class _PlayerState extends BaseState<Player, PlayerBloc> {
               inactiveTickMarkColor: Colors.grey,
             ),
             child: Slider(
-              onChanged: (v) {},
+              onChanged: (v) {
+                bloc.kuGouBloc.seek(v);
+              },
               value: position.inSeconds.toDouble(),
               min: 0,
               max: duration.inSeconds.toDouble(),

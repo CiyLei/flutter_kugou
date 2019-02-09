@@ -77,6 +77,18 @@ class KuGouBloc extends BlocBase {
     }
   }
 
+  void seek(double seconds) {
+    if (_playIndex >= 0 && _playIndex < _plays.length) {
+      _currentDuration = Duration(milliseconds: (seconds * 1000).toInt());
+      _audioPlugin.seek(seconds);
+      _sendStream(PlaySongInfoBean(
+          songInfo: _songInfo,
+          duration: _audioPlugin.duration,
+          position: _currentDuration,
+          state: _audioPlugin.state == AudioPlayerState.PLAYING ? 1 : 0));
+    }
+  }
+
   void deletePlayer(int index) {
     if (_plays.length <= 1) {
       clearPlayerList();
