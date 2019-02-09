@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_kugou/component/net/network_image.dart';
 import 'package:palette_generator/palette_generator.dart';
 
@@ -20,6 +24,7 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
     with SingleTickerProviderStateMixin {
   int _songImageIndex = 0;
   AnimationController _hideController;
+  static const _imagePalettePlatform = const MethodChannel('com.ciy.flutterkugou/imagePalette');
 
   @override
   void initState() {
@@ -62,7 +67,7 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
 
   int _getIndex() {
     if (_songImageIndex < widget.singImages.length) {
-      _imagePalette(MyNetworkImage(widget.singImages[_songImageIndex]));
+      _imagePalette(widget.singImages[_songImageIndex]);
       return _songImageIndex;
     }
     return 0;
@@ -74,10 +79,21 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
     return 0;
   }
 
-  _imagePalette(ImageProvider imageProvider) async{
-    Color paletteColor = await _getImagePaletteColor(imageProvider);
-    if (widget.controller != null && widget.controller.onPaletteChange != null && paletteColor != null)
-      widget.controller.onPaletteChange(paletteColor);
+  // 用异步去取图片的主色调会让界面严重卡顿，放到另一个Ioslate中又不起作用，不知道为什么，所以放到native层去做
+  void _imagePalette(String url) async{
+    if (Platform.isAndroid) { //Platform.isIOS
+      String colorStr = await _imagePalettePlatform.invokeMethod("getImagePalette", url);
+      List<String> colors = colorStr.split(",");
+      if (colors.length == 4) {
+        Color c = Color.fromARGB(int.parse(colors[0]), int.parse(colors[1]), int.parse(colors[2]), int.parse(colors[3]));
+        if (widget.controller != null && widget.controller.onPaletteChange != null)
+          widget.controller.onPaletteChange(c);
+      }
+    } else {
+      Color paletteColor = await _getImagePaletteColor(MyNetworkImage(url));
+      if (widget.controller != null && widget.controller.onPaletteChange != null && paletteColor != null)
+        widget.controller.onPaletteChange(paletteColor);
+    }
   }
 
   // 获取图片主色调
