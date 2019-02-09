@@ -100,12 +100,20 @@ class _SingImagesLoopViewState extends State<SingImagesLoopView>
   Future<Color> _getImagePaletteColor(ImageProvider imageProvider) async {
     if (!_paletteCache.containsKey(imageProvider)){
       PaletteGenerator paletteGenerator = await PaletteGenerator.fromImageProvider(imageProvider);
-      int num = 0; // 因为有可能失败，所以再给他3次机会
-      while((paletteGenerator.dominantColor == null || paletteGenerator.dominantColor.color == null) && num < 3) {
-        num++;
-        paletteGenerator = await PaletteGenerator.fromImageProvider(imageProvider);
-      }
-      _paletteCache[imageProvider] = paletteGenerator.dominantColor?.color;
+      Color color = paletteGenerator.vibrantColor?.color;
+      if (color == null)
+        color = paletteGenerator.mutedColor?.color;
+      if (color == null)
+        color = paletteGenerator.lightVibrantColor?.color;
+      if (color == null)
+        color = paletteGenerator.lightMutedColor?.color;
+      if (color == null)
+        color = paletteGenerator.darkVibrantColor?.color;
+      if (color == null)
+        color = paletteGenerator.darkMutedColor?.color;
+      if (color == null)
+        color = paletteGenerator.dominantColor?.color;
+      _paletteCache[imageProvider] = color;
     }
     return _paletteCache[imageProvider];
   }
