@@ -7,7 +7,6 @@ class Listen extends StatefulWidget {
 }
 
 class _ListenState extends State<Listen> with AutomaticKeepAliveClientMixin {
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -28,26 +27,32 @@ class _ListenState extends State<Listen> with AutomaticKeepAliveClientMixin {
             ])),
             SliverGrid.count(
               crossAxisCount: 3,
-              childAspectRatio: 1.3,
+              childAspectRatio: 1.8,
               children: <Widget>[
-                Container(
-                  color: Colors.red[100],
-                ),
-                Container(
-                  color: Colors.red[200],
-                ),
-                Container(
-                  color: Colors.red[300],
-                ),
-                Container(
-                  color: Colors.red[400],
-                ),
-                Container(
-                  color: Colors.red[500],
-                ),
-                Container(
-                  color: Colors.red[600],
-                ),
+                _buildMenuItem(
+                    icon: Icons.music_note,
+                    color: Colors.orangeAccent,
+                    title: "乐库"),
+                _buildMenuItem(
+                    icon: Icons.format_list_bulleted,
+                    color: Colors.greenAccent,
+                    title: "歌单"),
+                _buildMenuItem(
+                    icon: Icons.swap_vert,
+                    color: Colors.blueAccent,
+                    title: "电台"),
+                _buildMenuItem(
+                    icon: Icons.hdr_strong,
+                    color: Colors.purpleAccent,
+                    title: "猜你喜欢"),
+                _buildMenuItem(
+                    icon: Icons.style,
+                    color: Colors.redAccent,
+                    title: "每日推荐"),
+                _buildMenuItem(
+                    icon: Icons.cake,
+                    color: Colors.grey,
+                    title: "更多"),
               ],
             ),
             SliverList(
@@ -61,6 +66,33 @@ class _ListenState extends State<Listen> with AutomaticKeepAliveClientMixin {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildMenuItem(
+      {@required IconData icon,
+      @required Color color,
+      @required String title}) {
+    return DecoratedBox(
+      decoration: BoxDecoration(color: Colors.white),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          CircleAvatar(
+            radius: 30.0,
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 30.0,
+            ),
+            backgroundColor: color,
+          ),
+          SizedBox(
+            height: 5.0,
+          ),
+          Text(title)
+        ],
+      ),
     );
   }
 
