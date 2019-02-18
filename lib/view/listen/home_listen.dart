@@ -1,16 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:flutter_kugou/component/view/kugou_banner.dart';
+import 'package:flutter_kugou/view/home_page_bloc.dart';
 
 class Listen extends StatefulWidget {
   @override
   _ListenState createState() => _ListenState();
 }
 
-class _ListenState extends State<Listen> with AutomaticKeepAliveClientMixin {
+class _ListenState extends State<Listen>
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+  ScrollController _customScrollController;
   KuGouBannerController _bannerController;
   Timer _bannerTimer;
+  HomePageBloc _homePageBloc;
+  TabController _tabController;
 
   @override
   void initState() {
@@ -19,38 +25,66 @@ class _ListenState extends State<Listen> with AutomaticKeepAliveClientMixin {
     _bannerTimer = Timer.periodic(const Duration(seconds: 10), (Timer timer) {
       _bannerController.animationToNext();
     });
+    _homePageBloc = BlocProvider.of<HomePageBloc>(context);
+    _customScrollController = ScrollController();
+    _customScrollController.addListener(() {
+      if (_homePageBloc.searchIsExpand && _customScrollController.offset > 440.0) {
+        _homePageBloc.closeSearch();
+        setState(() {});
+      } else if (!_homePageBloc.searchIsExpand && _customScrollController.offset < 440.0) {
+        _homePageBloc.expandSearch();
+        setState(() {});
+      }
+    });
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        CustomScrollView(
-          slivers: <Widget>[
-            SliverList(
-                delegate: SliverChildListDelegate([
-              Padding(
-                padding: const EdgeInsets.only(top: 50.0),
-                child: KuGouBanner(controller: _bannerController, imageUrl: [
-                  "https://imgessl.kugou.com/commendpic/20190109/20190109104215314555.jpg",
-                  "https://imgessl.kugou.com/commendpic/20190109/20190109104155147376.jpg",
-                  "https://imgessl.kugou.com/commendpic/20190108/20190108190956902072.jpg",
-                  "https://imgessl.kugou.com/commendpic/20190214/20190214180525144797.jpg",
-                ]),
-              )
-            ])),
-            _buildMenuGrid(),
-            SliverList(
-                delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-              return Container(
-                height: 50.0,
-                color: Colors.green,
-              );
-            }, childCount: 20))
-          ],
-        ),
-      ],
+    return DecoratedBox(
+      decoration: BoxDecoration(color: Colors.white),
+      child: Stack(
+        children: <Widget>[
+          CustomScrollView(
+            controller: _customScrollController,
+            slivers: <Widget>[
+              SliverList(
+                  delegate: SliverChildListDelegate([
+                    Container(
+                      padding: const EdgeInsets.only(top: 50.0),
+                      color: Theme.of(context).primaryColor,
+                      child: KuGouBanner(controller: _bannerController, imageUrl: [
+                        "https://imgessl.kugou.com/commendpic/20190109/20190109104215314555.jpg",
+                        "https://imgessl.kugou.com/commendpic/20190109/20190109104155147376.jpg",
+                        "https://imgessl.kugou.com/commendpic/20190108/20190108190956902072.jpg",
+                        "https://imgessl.kugou.com/commendpic/20190214/20190214180525144797.jpg",
+                      ]),
+                    )
+                  ])),
+              _buildMenuGrid(),
+              SliverList(delegate: SliverChildListDelegate([
+                _buildListTitle(),
+              ])),
+              SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                        return Container(
+                          height: 50.0,
+                          color: Colors.green[(index % 9 + 1) * 100],
+                        );
+                      }, childCount: 30))
+            ],
+          ),
+          Opacity(
+            opacity: _homePageBloc.searchIsExpand ? 0.0 : 1.0,
+            child: Container(
+              width: double.infinity,
+              color: Colors.white,
+              child: _buildListTitle(topPadding: 0.0),
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -106,6 +140,35 @@ class _ListenState extends State<Listen> with AutomaticKeepAliveClientMixin {
     );
   }
 
+  Widget _buildListTitle({double topPadding = 20.0}) {
+    return Container(
+      padding: EdgeInsets.only(top: topPadding, bottom: 3.0),
+      decoration: BoxDecoration(color: Colors.white),
+      child: TabBar(
+        isScrollable: true,
+        indicatorPadding: const EdgeInsets.only(left: 25.0, right: 25.0),
+        controller: _tabController,
+        indicatorColor: Theme.of(context).primaryColor,
+        tabs: [
+          _buildListTitleItem("新歌"),
+          _buildListTitleItem("直播"),
+          _buildListTitleItem("歌单"),
+          _buildListTitleItem("资讯"),
+          _buildListTitleItem("视频"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListTitleItem(String title) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        title,
+        style: TextStyle(color: Colors.black),
+      ),
+    );
+  }
 
   @override
   void dispose() {
