@@ -5,8 +5,9 @@ import 'package:flutter_kugou/component/net/network_image.dart';
 
 class KuGouBanner extends StatefulWidget {
   List<String> imageUrl;
+  KuGouBannerController controller;
 
-  KuGouBanner({this.imageUrl, Key key}) : super(key: key);
+  KuGouBanner({this.imageUrl, this.controller, Key key}) : super(key: key);
 
   @override
   _KuGouBannerState createState() => _KuGouBannerState();
@@ -16,6 +17,12 @@ class _KuGouBannerState extends State<KuGouBanner> {
   double _pageContentWidth;
   ScrollController _scrollController;
   int pageIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller?._onNext = next;
+  }
 
   @override
   void didChangeDependencies() {
@@ -42,15 +49,7 @@ class _KuGouBannerState extends State<KuGouBanner> {
               double _diff = max(0, MediaQuery.of(context).size.width * 0.15 - 20);
               double _offset = _scrollController.offset + _diff;
               pageIndex = (_offset / _pageContentWidth + 0.5).toInt();
-              _scrollController.animateTo(
-                  (3 * _pageContentWidth - MediaQuery.of(context).size.width) / 2 +
-                      (pageIndex - 1) * _pageContentWidth,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.linear);
-              setState(() {});
-              if (pageIndex == 0 || pageIndex == widget.imageUrl.length + 1) {
-                _sleepJumpTo(const Duration(milliseconds: 300), pageIndex);
-              }
+              toIndex(pageIndex);
             },
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -82,6 +81,25 @@ class _KuGouBannerState extends State<KuGouBanner> {
         (3 * _pageContentWidth - MediaQuery.of(context).size.width) / 2 +
             (pageIndex - 1) * _pageContentWidth);
     setState(() {});
+  }
+
+  void next() {
+    pageIndex++;
+    if (pageIndex > widget.imageUrl.length + 1)
+      pageIndex = 0;
+    toIndex(pageIndex);
+  }
+
+  void toIndex(int index) {
+    _scrollController.animateTo(
+        (3 * _pageContentWidth - MediaQuery.of(context).size.width) / 2 +
+            (index - 1) * _pageContentWidth,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.linear);
+    setState(() {});
+    if (index == 0 || index == widget.imageUrl.length + 1) {
+      _sleepJumpTo(const Duration(milliseconds: 300), index);
+    }
   }
 
   List<Widget> _bildBannerItems() {
@@ -121,5 +139,14 @@ class _KuGouBannerState extends State<KuGouBanner> {
         );
       }).toList(),
     );
+  }
+}
+
+class KuGouBannerController {
+  void Function() _onNext;
+  void animationToNext() {
+    if (_onNext != null) {
+      _onNext();
+    }
   }
 }
