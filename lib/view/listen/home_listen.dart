@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
@@ -39,12 +40,9 @@ class _ListenState extends State<Listen>
         _homePageBloc.expandSearch();
         setState(() {});
       }
-      if (_customScrollController.offset >= 0 &&
-          _customScrollController.offset <= 150) {
-        setState(() {
-          _bannerTopPadding = _customScrollController.offset;
-        });
-      }
+      setState(() {
+        _bannerTopPadding = max(0, _customScrollController.offset);
+      });
     });
     _tabController = TabController(length: 5, vsync: this);
   }
@@ -52,41 +50,75 @@ class _ListenState extends State<Listen>
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: BoxDecoration(color: Colors.white),
-      child: CustomScrollView(
-        controller: _customScrollController,
-        slivers: <Widget>[
-          SliverToBoxAdapter(
-            child: Container(
-              padding: const EdgeInsets.only(top: 50.0),
-              color: Theme.of(context).primaryColor,
-              child: KuGouBanner(
-                controller: _bannerController,
-                imageUrl: [
-                  "https://imgessl.kugou.com/commendpic/20190109/20190109104215314555.jpg",
-                  "https://imgessl.kugou.com/commendpic/20190109/20190109104155147376.jpg",
-                  "https://imgessl.kugou.com/commendpic/20190108/20190108190956902072.jpg",
-                  "https://imgessl.kugou.com/commendpic/20190214/20190214180525144797.jpg",
-                ],
-                topPadding: _bannerTopPadding,
+      decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+      child: Stack(
+        children: <Widget>[
+          _buildBack(),
+          CustomScrollView(
+            controller: _customScrollController,
+            physics: BouncingScrollPhysics(),
+            slivers: <Widget>[
+              SliverToBoxAdapter(
+                child: Container(
+                  padding: const EdgeInsets.only(top: 50.0),
+//                  color: Theme.of(context).primaryColor,
+                  child: KuGouBanner(
+                    controller: _bannerController,
+                    imageUrl: [
+                      "https://imgessl.kugou.com/commendpic/20190109/20190109104215314555.jpg",
+                      "https://imgessl.kugou.com/commendpic/20190109/20190109104155147376.jpg",
+                      "https://imgessl.kugou.com/commendpic/20190108/20190108190956902072.jpg",
+                      "https://imgessl.kugou.com/commendpic/20190214/20190214180525144797.jpg",
+                    ],
+                    topPadding: _bannerTopPadding,
+                  ),
+                ),
               ),
-            ),
-          ),
-          _buildMenuGrid(),
-          SliverPersistentHeader(
-            delegate:
-                KuGouHeaderDelegate(height: 40.0, child: _buildListTitle()),
-            pinned: true,
-          ),
-          SliverList(
-              delegate:
-                  SliverChildBuilderDelegate((BuildContext context, int index) {
-            return Container(
-              height: 50.0,
-              color: Colors.green[(index % 9 + 1) * 100],
-            );
-          }, childCount: 30))
+              _buildMenuGrid(),
+              SliverPersistentHeader(
+                delegate:
+                    KuGouHeaderDelegate(height: 40.0, child: _buildListTitle()),
+                pinned: true,
+              ),
+              SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                return Container(
+                  height: 50.0,
+                  color: Colors.green[(index % 9 + 1) * 100],
+                );
+              }, childCount: 30))
+            ],
+          )
         ],
+      ),
+    );
+  }
+
+  Padding _buildBack() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 50.0),
+      child: Container(
+        alignment: Alignment.center,
+        height: _customScrollController.hasClients
+            ? max(50.0, -_customScrollController.offset)
+            : 50.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.memory,
+              color: Colors.white70,
+            ),
+            SizedBox(
+              width: 5.0,
+            ),
+            Text(
+              "就是歌多",
+              style: TextStyle(color: Colors.white70),
+            )
+          ],
+        ),
       ),
     );
   }
