@@ -48,23 +48,22 @@ class _ListenState extends State<Listen>
           CustomScrollView(
             controller: _customScrollController,
             slivers: <Widget>[
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                    Container(
-                      padding: const EdgeInsets.only(top: 50.0),
-                      color: Theme.of(context).primaryColor,
-                      child: KuGouBanner(controller: _bannerController, imageUrl: [
-                        "https://imgessl.kugou.com/commendpic/20190109/20190109104215314555.jpg",
-                        "https://imgessl.kugou.com/commendpic/20190109/20190109104155147376.jpg",
-                        "https://imgessl.kugou.com/commendpic/20190108/20190108190956902072.jpg",
-                        "https://imgessl.kugou.com/commendpic/20190214/20190214180525144797.jpg",
-                      ]),
-                    )
-                  ])),
+              SliverToBoxAdapter(
+                child: Container(
+                  padding: const EdgeInsets.only(top: 50.0),
+                  color: Theme.of(context).primaryColor,
+                  child: KuGouBanner(controller: _bannerController, imageUrl: [
+                    "https://imgessl.kugou.com/commendpic/20190109/20190109104215314555.jpg",
+                    "https://imgessl.kugou.com/commendpic/20190109/20190109104155147376.jpg",
+                    "https://imgessl.kugou.com/commendpic/20190108/20190108190956902072.jpg",
+                    "https://imgessl.kugou.com/commendpic/20190214/20190214180525144797.jpg",
+                  ]),
+                ),
+              ),
               _buildMenuGrid(),
-              SliverList(delegate: SliverChildListDelegate([
-                _buildListTitle(),
-              ])),
+              SliverToBoxAdapter(
+                child: _buildListTitle(),
+              ),
               SliverList(
                   delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
