@@ -6,8 +6,9 @@ import 'package:flutter_kugou/component/net/network_image.dart';
 class KuGouBanner extends StatefulWidget {
   List<String> imageUrl;
   KuGouBannerController controller;
+  double topPadding;
 
-  KuGouBanner({this.imageUrl, this.controller, Key key}) : super(key: key);
+  KuGouBanner({this.imageUrl, this.controller, this.topPadding = 0.0, Key key}) : super(key: key);
 
   @override
   _KuGouBannerState createState() => _KuGouBannerState();
@@ -38,35 +39,45 @@ class _KuGouBannerState extends State<KuGouBanner> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
+    return Container(
+      padding: EdgeInsets.only(top: widget.topPadding),
+      height: 150.0,
+      child: UnconstrainedBox(
+        alignment: Alignment.topCenter,
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
           height: 150.0,
-          alignment: Alignment.center,
-          child: Listener(
-            onPointerUp: (PointerUpEvent event) {
-              // 屏幕跟实际内容相差的部分
-              double _diff = max(0, MediaQuery.of(context).size.width * 0.15 - 20);
-              double _offset = _scrollController.offset + _diff;
-              pageIndex = (_offset / _pageContentWidth + 0.5).toInt();
-              toIndex(pageIndex);
-            },
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller: _scrollController,
-              child: Row(
-                children: _bildBannerItems(),
+          child: Stack(
+            children: <Widget>[
+              Container(
+                alignment: Alignment.center,
+                child: Listener(
+                  onPointerUp: (PointerUpEvent event) {
+                    // 屏幕跟实际内容相差的部分
+                    double _diff = max(0, MediaQuery.of(context).size.width * 0.15 - 20);
+                    double _offset = _scrollController.offset + _diff;
+                    pageIndex = (_offset / _pageContentWidth + 0.5).toInt();
+                    toIndex(pageIndex);
+                  },
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    controller: _scrollController,
+                    child: Row(
+                      children: _bildBannerItems(),
+                    ),
+                  ),
+                ),
               ),
-            ),
+              Positioned(
+                bottom: 10.0,
+                left: 10.0,
+                right: 10.0,
+                child: _buildIndicator(),
+              ),
+            ],
           ),
         ),
-        Positioned(
-          bottom: 10.0,
-          left: 10.0,
-          right: 10.0,
-          child: _buildIndicator(),
-        ),
-      ],
+      ),
     );
   }
 

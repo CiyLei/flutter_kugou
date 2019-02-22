@@ -14,6 +14,7 @@ class _ListenState extends State<Listen>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   ScrollController _customScrollController;
   KuGouBannerController _bannerController;
+  double _bannerTopPadding;
   Timer _bannerTimer;
   HomePageBloc _homePageBloc;
   TabController _tabController;
@@ -26,14 +27,23 @@ class _ListenState extends State<Listen>
       _bannerController.animationToNext();
     });
     _homePageBloc = BlocProvider.of<HomePageBloc>(context);
+    _bannerTopPadding = 0.0;
     _customScrollController = ScrollController();
     _customScrollController.addListener(() {
-      if (_homePageBloc.searchIsExpand && _customScrollController.offset > 420.0) {
+      if (_homePageBloc.searchIsExpand &&
+          _customScrollController.offset > 420.0) {
         _homePageBloc.closeSearch();
         setState(() {});
-      } else if (!_homePageBloc.searchIsExpand && _customScrollController.offset < 420.0) {
+      } else if (!_homePageBloc.searchIsExpand &&
+          _customScrollController.offset < 420.0) {
         _homePageBloc.expandSearch();
         setState(() {});
+      }
+      if (_customScrollController.offset >= 0 &&
+          _customScrollController.offset <= 150) {
+        setState(() {
+          _bannerTopPadding = _customScrollController.offset;
+        });
       }
     });
     _tabController = TabController(length: 5, vsync: this);
@@ -50,30 +60,32 @@ class _ListenState extends State<Listen>
             child: Container(
               padding: const EdgeInsets.only(top: 50.0),
               color: Theme.of(context).primaryColor,
-              child: KuGouBanner(controller: _bannerController, imageUrl: [
-                "https://imgessl.kugou.com/commendpic/20190109/20190109104215314555.jpg",
-                "https://imgessl.kugou.com/commendpic/20190109/20190109104155147376.jpg",
-                "https://imgessl.kugou.com/commendpic/20190108/20190108190956902072.jpg",
-                "https://imgessl.kugou.com/commendpic/20190214/20190214180525144797.jpg",
-              ]),
+              child: KuGouBanner(
+                controller: _bannerController,
+                imageUrl: [
+                  "https://imgessl.kugou.com/commendpic/20190109/20190109104215314555.jpg",
+                  "https://imgessl.kugou.com/commendpic/20190109/20190109104155147376.jpg",
+                  "https://imgessl.kugou.com/commendpic/20190108/20190108190956902072.jpg",
+                  "https://imgessl.kugou.com/commendpic/20190214/20190214180525144797.jpg",
+                ],
+                topPadding: _bannerTopPadding,
+              ),
             ),
           ),
           _buildMenuGrid(),
           SliverPersistentHeader(
-            delegate: KuGouHeaderDelegate(
-                height: 40.0,
-                child: _buildListTitle()
-            ),
+            delegate:
+                KuGouHeaderDelegate(height: 40.0, child: _buildListTitle()),
             pinned: true,
           ),
           SliverList(
-              delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                    return Container(
-                      height: 50.0,
-                      color: Colors.green[(index % 9 + 1) * 100],
-                    );
-                  }, childCount: 30))
+              delegate:
+                  SliverChildBuilderDelegate((BuildContext context, int index) {
+            return Container(
+              height: 50.0,
+              color: Colors.green[(index % 9 + 1) * 100],
+            );
+          }, childCount: 30))
         ],
       ),
     );
@@ -178,7 +190,8 @@ class KuGouHeaderDelegate extends SliverPersistentHeaderDelegate {
   KuGouHeaderDelegate({@required this.height, @required this.child});
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return child;
   }
 
@@ -192,5 +205,4 @@ class KuGouHeaderDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
     return false;
   }
-
 }
