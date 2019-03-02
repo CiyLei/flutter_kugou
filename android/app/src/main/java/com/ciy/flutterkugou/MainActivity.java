@@ -32,9 +32,9 @@ public class MainActivity extends FlutterActivity {
         super.onCreate(savedInstanceState);
         new MethodChannel(getFlutterView(), CHANNEL).setMethodCallHandler(new MethodCallHandler() {
             @Override
-            public void onMethodCall(MethodCall methodCall, Result result) {
+            public void onMethodCall(MethodCall methodCall, final Result result) {
                 if (methodCall.method.equals("getImagePalette")) {
-                    String url = (String) methodCall.arguments;
+                    final String url = (String) methodCall.arguments;
                     if (paletteCache.containsKey(url)) {
                         result.success(paletteCache.get(url));
                         return;

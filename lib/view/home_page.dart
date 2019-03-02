@@ -30,8 +30,8 @@ class _HomePageState extends BaseState<HomePage, HomePageBloc>
   @override
   void initState() {
     super.initState();
-    _currentIndex = 0;
-    _tabController = TabController(length: 4, vsync: this);
+    _currentIndex = 1;
+    _tabController = TabController(length: 4, vsync: this, initialIndex: _currentIndex);
     _tabController.addListener(() {
       _changeNavigationTitle(_tabController.index);
     });
