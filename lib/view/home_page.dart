@@ -21,7 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends BaseState<HomePage, HomePageBloc>
-    with SingleTickerProviderStateMixin, TickerProviderStateMixin {
+    with TickerProviderStateMixin {
   int _currentIndex;
   TabController _tabController;
   final _titleList = ["我", "听", "看", "唱"];

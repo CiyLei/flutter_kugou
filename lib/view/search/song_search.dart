@@ -24,8 +24,8 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
   @override
   void initState() {
     super.initState();
-    _search = "";
-    _searchController = TextEditingController();
+    _search = "光年之外";
+    _searchController = TextEditingController(text: _search);
     _focusNode = FocusNode();
     _focusNode.addListener(() {
       setState(() {});
@@ -126,7 +126,7 @@ class _SongSearchState extends BaseState<SongSearch, SongSearchBloc> {
             },
             controller: _searchController,
             cursorColor: Colors.white,
-            style: TextStyle(color: Colors.white, fontSize: 14.0),
+            style: TextStyle(color: Colors.white, fontSize: 14.0, height: 1.2),
             decoration: InputDecoration(
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.only(top: 7.0)),
