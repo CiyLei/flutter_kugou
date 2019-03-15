@@ -51,7 +51,7 @@ class MyNetworkImage extends ImageProvider<MyNetworkImage> {
   Future<ui.Codec> _loadAsync(MyNetworkImage key) async {
     assert(key == this);
     //本地已经缓存过就直接返回图片
-    if (sdCache != null) {
+    if (sdCache != null && sdCache) {
       final Uint8List bytes = await _getFromSdcard(key.url);
       if (bytes != null &&
           bytes.lengthInBytes != null &&
@@ -73,7 +73,7 @@ class MyNetworkImage extends ImageProvider<MyNetworkImage> {
 
     final Uint8List bytes = await consolidateHttpClientResponseBytes(response);
 //网络请求结束后缓存图片到本地
-    if (sdCache != null && bytes.lengthInBytes != 0) {
+    if (sdCache != null && sdCache && bytes.lengthInBytes != 0) {
       _saveToImage(bytes, key.url);
     }
     if (bytes.lengthInBytes == 0)
