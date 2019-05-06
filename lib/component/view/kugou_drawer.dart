@@ -78,8 +78,7 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
      * 如果flutter构建的太快，在第一帧生成前执行了didChangeDependencies和build，
      * 那么在第一帧生成后会再执行一边，所以我们这里判断_scrollOffset为0就不继续下去了。
      */
-    if (_scrollOffset == 0)
-      return Text("你太快啦");
+    if (_scrollOffset == 0) return Text("你太快啦");
     return Material(
       child: Listener(
         onPointerUp: (PointerUpEvent event) {
@@ -91,54 +90,59 @@ class KuGouScaffoldState extends State<KuGouScaffold> {
         },
         child: NotificationListener<KuGouTabBarViewScrollerNotification>(
             onNotification: (notification) {
-              _controller.jumpTo(max(0, min(_controller.offset - notification.dx, _scrollOffset)));
+              _controller.jumpTo(max(
+                  0, min(_controller.offset - notification.dx, _scrollOffset)));
               return true;
             },
-        child: NotificationListener<KuGouDrawerNotification>(
-            onNotification: (notification) {
-              setState(() {
-                // 接收到是否禁止侧滑的消息
-                this.drawerEnable = notification.drawerEnable;
-              });
-            },
-            child: SingleChildScrollView(
-              // 禁止在ios中的弹簧效果
-              physics: drawerEnable ? ClampingScrollPhysics() : NeverScrollableScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              controller: _controller,
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    width: _scrollOffset,
-                    child: widget.drawer,
-                  ),
-                  Stack(
+            child: NotificationListener<KuGouDrawerNotification>(
+                onNotification: (notification) {
+                  setState(() {
+                    // 接收到是否禁止侧滑的消息
+                    this.drawerEnable = notification.drawerEnable;
+                  });
+                },
+                child: SingleChildScrollView(
+                  // 禁止在ios中的弹簧效果
+                  physics: drawerEnable
+                      ? ClampingScrollPhysics()
+                      : NeverScrollableScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  controller: _controller,
+                  child: Row(
                     children: <Widget>[
                       Container(
-                        width: MediaQuery.of(context).size.width,
-                        alignment: Alignment.center,
-                        child: widget.child,
-                        foregroundDecoration: BoxDecoration(
-                            color: Color.fromRGBO(0, 0, 0, _progress * 0.5)),
+                        width: _scrollOffset,
+                        child: widget.drawer,
                       ),
-                      _isDrawer
-                          ? GestureDetector(
-                        onTap: () {
-                          closeDrawer();
-                        },
-                        child: AbsorbPointer(
-                          child: SizedBox(
+                      Stack(
+                        children: <Widget>[
+                          Container(
                             width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height,
+                            alignment: Alignment.center,
+                            child: widget.child,
+                            foregroundDecoration: BoxDecoration(
+                                color:
+                                    Color.fromRGBO(0, 0, 0, _progress * 0.5)),
                           ),
-                        ),
-                      )
-                          : SizedBox()
+                          _isDrawer
+                              ? GestureDetector(
+                                  onTap: () {
+                                    closeDrawer();
+                                  },
+                                  child: AbsorbPointer(
+                                    child: SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height,
+                                    ),
+                                  ),
+                                )
+                              : SizedBox()
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
-            ))),
+                ))),
       ),
     );
   }

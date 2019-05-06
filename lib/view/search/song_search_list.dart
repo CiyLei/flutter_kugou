@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_kugou/component/base_state.dart';
 import 'package:flutter_kugou/view/search/bean/search_songs_bean.dart';
 import 'package:flutter_kugou/view/search/song_search_list_bloc.dart';
+import 'package:flutter/cupertino.dart';
 
 class SongSearchList extends StatefulWidget {
   @override
@@ -37,7 +38,68 @@ class _SongSearchListState
                             child: _buildItem(index, snapshot.data[index],
                                 onAddTap: () {
                               bloc.addSong(snapshot.data[index].hash, context);
-                            }, onMoreTap: () {}),
+                            }, onMoreTap: () {
+                              showCupertinoModalPopup(
+                                  context: context,
+                                  builder: (c) {
+                                    return Material(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                            child: Text("歌曲：${snapshot.data[index].songname}", style: TextStyle(color: Colors.grey[600]),),
+                                          ),
+                                          Divider(height: 1,),
+                                          _buildSongInfoItem(
+                                            context: context,
+                                            title: "歌手：${snapshot.data[index].singername}",
+                                            iconData: Icons.person
+                                          ),
+                                          Divider(height: 1.0, indent: 70,),
+                                          _buildSongInfoItem(
+                                            context: context,
+                                            title: "专辑：${snapshot.data[index].album_name}",
+                                            iconData: Icons.disc_full
+                                          ),
+                                          Divider(height: 1.0, indent: 70,),
+                                          _buildSongInfoItem(
+                                            context: context,
+                                            title: "比特率：${snapshot.data[index].bitrate}",
+                                            iconData: Icons.ac_unit
+                                          ),
+                                          Divider(height: 1.0, indent: 70,),
+                                          _buildSongInfoItem(
+                                            context: context,
+                                            title: "文件大小：${(snapshot.data[index].filesize / 1000.00 / 1000.00).toStringAsFixed(2)} M",
+                                            iconData: Icons.format_size
+                                          ),
+                                          Divider(height: 1.0, indent: 70,),
+                                          _buildSongInfoItem(
+                                            context: context,
+                                            title: "文件Hash值：${snapshot.data[index].hash}",
+                                            iconData: Icons.file_download
+                                          ),
+                                          Container(
+                                            height: 10.0,
+                                            color:
+                                                Theme.of(context).dividerColor,
+                                          ),
+                                          ListTile(
+                                            title: Text(
+                                              "关闭",
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            onTap: () {
+                                              Navigator.pop(c);
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  });
+                            }),
                           ),
                         )
                       : Padding(
@@ -68,6 +130,17 @@ class _SongSearchListState
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSongInfoItem({BuildContext context, String title, IconData iconData}) {
+    assert(title.isNotEmpty);
+    return ListTile(
+      title: Text(title),
+      leading: Icon(
+        iconData,
+        color: Theme.of(context).primaryColor,
+      ),
     );
   }
 
