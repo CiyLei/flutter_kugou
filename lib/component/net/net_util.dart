@@ -6,7 +6,9 @@ import 'package:dio/dio.dart';
 class NetUtil {
   static Future<String> GET(
       {@required String url, Map<String, dynamic> params}) async {
-    Response response = await Dio().get(url, queryParameters: params);
+    Response response = await Dio().get(url, queryParameters: params, options: Options(headers: {
+      "Cookie" : "你的登录cookie"
+    }));
     return response.data.toString();
   }
 

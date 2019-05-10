@@ -49,36 +49,36 @@ class _SongSearchListState
                                         children: <Widget>[
                                           Padding(
                                             padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                                            child: Text("歌曲：${snapshot.data[index].songname}", style: TextStyle(color: Colors.grey[600]),),
+                                            child: Text("歌曲： ${snapshot.data[index].songname}", style: TextStyle(color: Colors.grey[600]),),
                                           ),
                                           Divider(height: 1,),
                                           _buildSongInfoItem(
                                             context: context,
-                                            title: "歌手：${snapshot.data[index].singername}",
+                                            title: "歌手： ${snapshot.data[index].singername}",
                                             iconData: Icons.person
                                           ),
                                           Divider(height: 1.0, indent: 70,),
                                           _buildSongInfoItem(
                                             context: context,
-                                            title: "专辑：${snapshot.data[index].album_name}",
+                                            title: "专辑： ${snapshot.data[index].album_name}",
                                             iconData: Icons.disc_full
                                           ),
                                           Divider(height: 1.0, indent: 70,),
                                           _buildSongInfoItem(
                                             context: context,
-                                            title: "比特率：${snapshot.data[index].bitrate}",
+                                            title: "比特率： ${snapshot.data[index].bitrate}",
                                             iconData: Icons.ac_unit
                                           ),
                                           Divider(height: 1.0, indent: 70,),
                                           _buildSongInfoItem(
                                             context: context,
-                                            title: "文件大小：${(snapshot.data[index].filesize / 1000.00 / 1000.00).toStringAsFixed(2)} M",
+                                            title: "文件大小： ${(snapshot.data[index].filesize / 1000.00 / 1000.00).toStringAsFixed(2)} M",
                                             iconData: Icons.format_size
                                           ),
                                           Divider(height: 1.0, indent: 70,),
                                           _buildSongInfoItem(
                                             context: context,
-                                            title: "文件Hash值：${snapshot.data[index].hash}",
+                                            title: "文件Hash值： ${snapshot.data[index].hash}",
                                             iconData: Icons.file_download
                                           ),
                                           Container(

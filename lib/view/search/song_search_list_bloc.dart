@@ -26,7 +26,8 @@ class SongSearchListBloc extends BlocBase{
       isMore = bean.data.info.length > 0;
       _data.clear();
       _data.addAll(bean.data.info);
-      _searchSongController.add(bean.data.info);
+      if (!_searchSongController.isClosed)
+        _searchSongController.add(bean.data.info);
     });
   }
 
@@ -34,7 +35,8 @@ class SongSearchListBloc extends BlocBase{
     RequestWareHouse.instance().getSearchSong(song, page: ++_page).then((SearchSongsBean bean) {
       isMore = bean.data.info.length > 0;
       _data.addAll(bean.data.info);
-      _searchSongController.add(_data);
+      if (!_searchSongController.isClosed)
+        _searchSongController.add(_data);
     });
   }
 

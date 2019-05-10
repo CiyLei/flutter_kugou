@@ -45,8 +45,9 @@ class RequestWareHouse {
 
   Future<SongInfoBean> getSongInfo(String hash) async{
     String response = await NetUtil.GET(
-      url: "http://www.kugou.com/yy/index.php?r=play/getdata",
+      url: "http://www.kugou.com/yy/index.php",
       params: {
+        "r": "play/getdata",
         "hash": hash,
       },
     );
