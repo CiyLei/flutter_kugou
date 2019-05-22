@@ -76,8 +76,9 @@ class _ListenState extends State<Listen>
               ),
               _buildMenuGrid(),
               SliverPersistentHeader(
-                delegate:
-                    KuGouHeaderDelegate(height: 40.0, child: _buildListTitle()),
+                delegate: KuGouHeaderDelegate(
+                    height: 40.0,
+                    child: _buildListTitle(["新歌", "直播", "歌单", "资讯", "视频"])),
                 pinned: true,
               ),
               SliverList(
@@ -95,7 +96,7 @@ class _ListenState extends State<Listen>
     );
   }
 
-  Padding _buildBack() {
+  Widget _buildBack() {
     return Padding(
       padding: const EdgeInsets.only(top: 50.0),
       child: Container(
@@ -175,23 +176,18 @@ class _ListenState extends State<Listen>
     );
   }
 
-  Widget _buildListTitle() {
+  Widget _buildListTitle(List<String> titles) {
     return Container(
       height: 40.0,
       decoration: BoxDecoration(color: Colors.white),
       child: TabBar(
-        isScrollable: true,
-        indicatorPadding: const EdgeInsets.only(left: 25.0, right: 25.0),
-        controller: _tabController,
-        indicatorColor: Theme.of(context).primaryColor,
-        tabs: [
-          _buildListTitleItem("新歌"),
-          _buildListTitleItem("直播"),
-          _buildListTitleItem("歌单"),
-          _buildListTitleItem("资讯"),
-          _buildListTitleItem("视频"),
-        ],
-      ),
+          isScrollable: true,
+          indicatorPadding: const EdgeInsets.only(left: 25.0, right: 25.0),
+          controller: _tabController,
+          indicatorColor: Theme.of(context).primaryColor,
+          tabs: titles.map((title) {
+            return _buildListTitleItem(title);
+          }).toList()),
     );
   }
 
