@@ -36,7 +36,7 @@ class MyNetworkImage extends ImageProvider<MyNetworkImage> {
   }
 
   @override
-  ImageStreamCompleter load(MyNetworkImage key) {
+  ImageStreamCompleter load(MyNetworkImage key, DecoderCallback decode) {
     return MultiFrameImageStreamCompleter(
         codec: _loadAsync(key),
         scale: key.scale,

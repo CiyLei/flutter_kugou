@@ -28,6 +28,7 @@ class RequestWareHouse {
         "keyword": songName
       },
     );
+    print('---------- getSearchSongName:$response \r\n');
     return SearchBean.fromJson(json.decode(response));
   }
 
@@ -40,6 +41,7 @@ class RequestWareHouse {
         "pagesize": "30"
       },
     );
+    print('---------- getSearchSong:$response \r\n');
     return SearchSongsBean.fromJson(json.decode(response));
   }
 
@@ -51,6 +53,7 @@ class RequestWareHouse {
         "hash": hash,
       },
     );
+    print('---------- getSongInfo:$response \r\n');
     return SongInfoBean.fromJson(json.decode(response));
   }
 
@@ -70,6 +73,7 @@ class RequestWareHouse {
         }],
       },
     );
+    print('---------- getSingerImages:$data \r\n');
     return SingerImagesBean.fromJson(data);
   }
 }
