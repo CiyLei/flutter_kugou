@@ -80,12 +80,12 @@ class Lyric {
   Duration keepTime;
 
   Lyric({this.content, String duration}) {
-    var matches = RegExp(r"^\d+?:\d+?\.\d+$").allMatches(duration).toList();
-    if (matches.isNotEmpty && duration.length >= 8) {
+    var matches = RegExp(r"^(\d+?):(\d+?)\.(\d+)$").allMatches(duration).toList();
+    if (matches.isNotEmpty && matches[0].groupCount == 3) {
       List<int> times = [
-        duration.substring(0, 2),
-        duration.substring(3, 5),
-        duration.substring(6, 8)
+        matches[0].group(1),
+        matches[0].group(2),
+        matches[0].group(3)
       ].map((v) => int.parse(v)).toList();
       time = Duration(
           minutes: times[0], seconds: times[1], milliseconds: times[2] * 10);
