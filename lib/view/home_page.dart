@@ -5,7 +5,7 @@ import 'package:flutter_kugou/component/bloc/bloc_provider.dart';
 import 'package:flutter_kugou/component/navigator/kugou_navigator.dart';
 import 'package:flutter_kugou/component/view/kugou_drawer.dart';
 import 'package:flutter_kugou/component/view/kugou_home_tabbar.dart';
-import 'package:flutter_kugou/view//me/home_me.dart';
+import 'package:flutter_kugou/view/me/home_me.dart';
 import 'package:flutter_kugou/view/home_page_bloc.dart';
 import 'package:flutter_kugou/view/listen/home_listen.dart';
 import 'package:flutter_kugou/view/look/home_look.dart';

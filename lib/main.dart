@@ -4,7 +4,7 @@ import 'package:flutter_kugou/component/bloc/kugou_bloc.dart';
 import 'package:flutter_kugou/component/navigator/kugou_navigator.dart';
 import 'package:flutter_kugou/component/view/kugou_bottom_navigation.dart';
 import 'package:flutter_kugou/component/view/kugou_drawer.dart';
-import 'package:flutter_kugou/view//home_page.dart';
+import 'package:flutter_kugou/view/home_page.dart';
 import 'package:flutter_kugou/view/home_page_bloc.dart';
 
 void main() => runApp(MyApp());
