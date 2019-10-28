@@ -15,7 +15,7 @@ class LyricManager {
       return null;
     if (!_cache.containsKey(data.songInfo.data.hash))
       _cache[data.songInfo.data.hash] = LyricManager(
-          lyrics: data.songInfo.data.lyrics, duration: data.duration);
+          lyrics: data.songInfo.data.lyrics.trim(), duration: data.duration);
     return _cache[data.songInfo.data.hash];
   }
 
@@ -80,13 +80,18 @@ class Lyric {
   Duration keepTime;
 
   Lyric({this.content, String duration}) {
-    List<int> times = [
-      duration.substring(0, 2),
-      duration.substring(3, 5),
-      duration.substring(6, 8)
-    ].map((v) => int.parse(v)).toList();
-    time = Duration(
-        minutes: times[0], seconds: times[1], milliseconds: times[2] * 10);
+    var matches = RegExp(r"^\d+?:\d+?\.\d+$").allMatches(duration).toList();
+    if (matches.isNotEmpty && duration.length >= 8) {
+      List<int> times = [
+        duration.substring(0, 2),
+        duration.substring(3, 5),
+        duration.substring(6, 8)
+      ].map((v) => int.parse(v)).toList();
+      time = Duration(
+          minutes: times[0], seconds: times[1], milliseconds: times[2] * 10);
+    } else {
+      time = Duration();
+    }
   }
 
 
