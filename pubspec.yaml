@@ -18,14 +18,14 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
-  dio: ^2.1.13
-  shared_preferences: ^0.5.1+1
-  audioplayer: ^0.5.2
-  http: ^0.12.0
-  path_provider: ^1.4.0   #这是获取 安卓  IOS 文件缓存路径
-  crypto: ^2.1.3   #这个主要是MD5  base64之类 转码   我们根据图片的md5(url)做为key来缓存
-  palette_generator: ^0.2.0   #取图片的主色调
+  cupertino_icons: ">=0.1.2 <2.0.0"
+  dio: ">=2.1.13 <6.0.0"
+  shared_preferences: ">=0.5.1+1 <3.0.0"
+  audioplayer: ">=0.5.2 <0.9.0"
+  http: ">=0.12.0 <0.14.0"
+  path_provider: ">=1.4.0 <3.0.0"   #这是获取 安卓  IOS 文件缓存路径
+  crypto: ">=2.1.3 <4.0.0"   #这个主要是MD5  base64之类 转码   我们根据图片的md5(url)做为key来缓存
+  palette_generator: ">=0.2.0 <0.4.0"   #取图片的主色调
 
 dev_dependencies:
   flutter_test:
